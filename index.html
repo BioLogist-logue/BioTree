@@ -4,53 +4,36 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BioLogue - 생명의 나무 (V17)</title>
+    <title>BioLogue - 생명의 나무 (V18)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         body, html { margin:0; padding:0; width:100%; height:100%; background-color:#020617; color:#ffffff; font-family:'Pretendard', sans-serif; overflow:hidden; touch-action: none; }
         #tree-canvas { width: 100vw; height: 100vh; }
         
         .link { fill: none; stroke: #475569; stroke-width: 2.5px; stroke-opacity: 0.4; transition: all 0.5s ease; }
         
-        .node-label { 
-            font-size: 14px; 
-            font-weight: 900; 
-            fill: #ffffff !important; 
-            paint-order: stroke;
-            stroke: #000000;
-            stroke-width: 4px;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            pointer-events: none; /* 클릭 이벤트 방해 금지 */
-        }
+        .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; pointer-events: none; }
         @media (max-width: 768px) { .node-label { font-size: 11px; } }
 
-        .key-label { 
-            font-size: 10px; 
-            fill: #94a3b8 !important; 
-            font-weight: 800; 
-            font-style: italic;
-            paint-order: stroke;
-            stroke: #000000;
-            stroke-width: 3px;
-            pointer-events: none;
-        }
+        .key-label { font-size: 10px; fill: #94a3b8 !important; font-weight: 800; stroke: #000000; stroke-width: 3px; pointer-events: none; }
         
-        /* 노드 그룹 전체에 마우스 포인터 적용 */
         .node { cursor: pointer; }
         .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
         .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
 
         .social-btn { transition: all 0.3s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         .social-btn:hover { transform: translateX(8px); }
+
+        /* 하단 정보 박스 스타일 */
+        .info-box { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
 
     <header class="fixed top-0 left-0 right-0 p-4 bg-slate-950/80 backdrop-blur-md z-[100] border-b border-white/10 flex justify-between items-center">
-        <h1 class="text-lg font-black flex items-center gap-2"><span class="text-blue-500 text-xl">🧬</span> BioLogue</h1>
+        <h1 class="text-lg font-black flex items-center gap-2"><span class="text-blue-500 text-xl">🧬</span> BioLogue Phylogenetic Tree</h1>
         <div class="text-[9px] text-slate-500 font-bold tracking-widest uppercase text-right leading-tight">
             Phylogenetic Tree<br>by Yoon Ji Young
         </div>
@@ -71,9 +54,25 @@
 
     <div id="tree-canvas"></div>
 
-    <div id="info-popup" class="fixed bottom-0 left-0 right-0 z-[200] bg-slate-900/95 border-t border-white/10 p-5 transform translate-y-full opacity-0 transition-all duration-500 backdrop-blur-2xl rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex justify-between items-start mb-4">
+    <div class="fixed bottom-12 left-4 right-4 md:left-8 md:right-auto md:w-80 z-[120] info-box p-4 rounded-2xl shadow-xl fade-in">
+        <h4 class="text-xs font-black text-blue-400 mb-2 uppercase tracking-tighter">Tree Information</h4>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+            본 계통수는 <b>rRNA(리보솜 RNA) 염기 서열 분석</b>에 기초한 최신 분류 체계를 바탕으로 작성되었습니다. <br><br>
+            데이터 오류나 보완이 필요한 부분이 있다면 언제든 아래의 '문의하기'를 통해 알려주시면 감사하겠습니다!
+        </p>
+    </div>
+
+    <footer class="fixed bottom-0 left-0 right-0 h-10 bg-slate-950/90 flex items-center justify-center z-[130] border-t border-white/5">
+        <p class="text-[10px] text-slate-500 font-medium">
+            © Copyright 2026 All rights reserved by BioLogist 
+            <a href="https://www.instagram.com/biologist_logue" target="_blank" class="ml-2 text-blue-400 hover:text-blue-300 font-bold decoration-dotted underline underline-offset-4 tracking-tighter">
+                문의하기 >
+            </a>
+        </p>
+    </footer>
+
+    <div id="info-popup" class="fixed bottom-0 left-0 right-0 z-[200] bg-slate-900/95 border-t border-white/10 p-5 transform translate-y-full opacity-0 transition-all duration-500 backdrop-blur-2xl rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+        <div class="max-w-4xl mx-auto pb-10"> <div class="flex justify-between items-start mb-4">
                 <div class="flex gap-4 items-center">
                     <div class="w-24 h-20 md:w-40 md:h-28 bg-slate-800 rounded-xl overflow-hidden border border-white/10 shadow-lg shrink-0">
                         <img id="p-img" src="" class="w-full h-full object-cover">
@@ -95,6 +94,7 @@
     </div>
 
     <script>
+        /* treeData 데이터 부분은 V17과 동일하게 유지 (분량상 생략, 주인님 코드 그대로 쓰시면 됩니다) */
         const treeData = {
             full: {
                 name: "LIFE", color: "#64748b",
@@ -132,7 +132,7 @@
                                 img: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&q=80&w=400",
                                 features: ["핵막O", "80S 리보솜"],
                                 children: [
-                                    { name: "원생생물계", emoji: "🧪", color: "#10b981", desc: "단세포 진핵생물 위주의 무리로 아메바, 짚신벌레 등이 속합니다.", features: ["단세포 중심"], img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=400" },
+                                    { name: "원생생물계", emoji: "🧪", color: "#eae361", desc: "단세포 진핵생물 위주의 무리로 아메바, 짚신벌레 등이 속합니다.", features: ["단세포 중심"], img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=400" },
                                     { name: "식물계", id: "plantae", emoji: "🌳", color: "#22c55e", desc: "광합성을 하는 다세포 독립영양 생물군입니다.", features: ["셀룰로스"], img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=400" },
                                     { name: "균계", emoji: "🍄", color: "#10b981", desc: "유기물을 분해 흡수하는 종속영양 생물군입니다.", features: ["키틴"], img: "https://images.unsplash.com/photo-1504244412039-654e80556a3e?auto=format&fit=crop&q=80&w=400" },
                                     { name: "동물계", id: "animalia", emoji: "🦁", color: "#f59e0b", desc: "운동 능력이 있는 다세포 종속영양 생물군입니다.", features: ["세포벽X"], img: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=400" }
@@ -186,68 +186,41 @@
             g.selectAll("*").remove();
             const data = treeData[level];
             const isMobile = window.innerWidth < 768;
-            
             document.getElementById('global-back-btn').style.display = (level === 'full') ? 'none' : 'block';
-
             const root = d3.hierarchy(data);
             const treeLayout = d3.tree();
-            
-            if(isMobile) {
-                treeLayout.nodeSize([110, 160]); 
-            } else {
-                treeLayout.size([window.innerHeight - 250, window.innerWidth - 450]);
-            }
+            if(isMobile) { treeLayout.nodeSize([110, 160]); } 
+            else { treeLayout.size([window.innerHeight - 250, window.innerWidth - 450]); }
             treeLayout(root);
-
             const linkGen = isMobile ? d3.linkVertical().x(d => d.x).y(d => d.y) : d3.linkHorizontal().x(d => d.y).y(d => d.x);
-
-            g.selectAll(".link").data(root.links()).enter().append("path")
-                .attr("class", "link")
-                .attr("d", linkGen);
-
-            // 노드 그룹 생성 및 클릭 이벤트 통합 적용
+            g.selectAll(".link").data(root.links()).enter().append("path").attr("class", "link").attr("d", linkGen);
             const node = g.selectAll(".node").data(root.descendants()).enter().append("g")
-                .attr("class", "node")
-                .attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`)
-                .on("click", (e, d) => showPopup(d.data)); // 이제 글자든 원이든 그룹 전체 클릭 가능!
-
-            // 터치 범위를 위한 투명 히트박스
+                .attr("class", "node").attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`)
+                .on("click", (e, d) => showPopup(d.data));
             node.append("circle").attr("r", 45).attr("class", "node-hitbox");
-            
             node.append("circle").attr("r", isMobile ? 7 : 9).style("fill", d => d.data.color || "#475569").style("stroke", "#fff");
-
-            // 글자 위치 최적화
-            node.append("text")
-                .attr("class", "node-label")
+            node.append("text").attr("class", "node-label")
                 .attr("dy", (d) => {
                     if(!isMobile) return d.children ? "-2.0em" : "0.35em";
-                    
                     if(d.children) return "-2.5em";
                     const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
-                    return (siblingIdx % 2 === 0) ? "3.2em" : "3.5em"; 
+                    return (siblingIdx % 2 === 0) ? "3.2em" : "5.5em"; 
                 })
-                .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30)) // PC: 원에서 더 멀리 배치
+                .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30))
                 .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
                 .text(d => (d.data.emoji || "") + " " + d.data.name);
-
-            node.filter(d => d.data.key).append("text")
-                .attr("class", "key-label")
+            node.filter(d => d.data.key).append("text").attr("class", "key-label")
                 .attr("dy", (d) => {
                     if(!isMobile) return "3.5em";
                     const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
                     return (siblingIdx % 2 !== 0) ? "6.8em" : "4.5em";
                 })
                 .attr("x", 0).style("text-anchor", "middle").text(d => d.data.key);
-
             const bounds = g.node().getBBox();
-            const parent = svg.node().getBoundingClientRect();
-            const scale = 0.75 / Math.max(bounds.width / parent.width, bounds.height / parent.height);
+            const parentRect = svg.node().getBoundingClientRect();
+            const scale = 0.75 / Math.max(bounds.width / parentRect.width, bounds.height / parentRect.height);
             const midX = bounds.x + bounds.width / 2, midY = bounds.y + bounds.height / 2;
-            
-            svg.transition().duration(700).call(
-                zoomObj.transform, 
-                d3.zoomIdentity.translate(parent.width/2 - scale*midX, parent.height/2 - scale*midY).scale(scale)
-            );
+            svg.transition().duration(700).call(zoomObj.transform, d3.zoomIdentity.translate(parentRect.width/2 - scale*midX, parentRect.height/2 - scale*midY).scale(scale));
         };
 
         function showPopup(data) {
@@ -256,25 +229,14 @@
             document.getElementById('p-title').innerText = (data.emoji || "") + " " + data.name;
             document.getElementById('p-desc').innerText = data.desc || "상세 정보를 확인해보세요.";
             document.getElementById('p-img').src = data.img || "https://via.placeholder.com/400x300/1e293b/ffffff?text=BioLogue";
-            
             document.getElementById('p-tags').innerHTML = (data.features || []).map(f => `<span class="bg-blue-500/30 px-2 py-0.5 rounded-full text-[10px] text-blue-100 border border-blue-400/30">#${f}</span>`).join('');
-
             const btnArea = document.getElementById('p-btn-area');
             const btn = document.getElementById('p-btn');
             btnArea.classList.toggle('hidden', !data.id);
             btn.onclick = (e) => { e.stopPropagation(); closePopup(); renderTree(data.id); };
-
             popup.classList.add('popup-active');
         }
-
         window.closePopup = () => document.getElementById('info-popup').classList.remove('popup-active');
-        
-        window.addEventListener('wheel', e => { 
-            if(e.deltaY < -60 && currentLevel !== 'full') { 
-                renderTree('full'); 
-                closePopup(); 
-            } 
-        }, { passive: true });
     </script>
 </body>
 </html>
