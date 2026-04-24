@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BioLogue - 생명의 나무 (V16)</title>
+    <title>BioLogue - 생명의 나무 (V17)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -23,7 +23,7 @@
             stroke-width: 4px;
             stroke-linecap: round;
             stroke-linejoin: round;
-            pointer-events: none;
+            pointer-events: none; /* 클릭 이벤트 방해 금지 */
         }
         @media (max-width: 768px) { .node-label { font-size: 11px; } }
 
@@ -35,13 +35,14 @@
             paint-order: stroke;
             stroke: #000000;
             stroke-width: 3px;
+            pointer-events: none;
         }
         
-        .node-hitbox { fill: transparent; cursor: pointer; }
+        /* 노드 그룹 전체에 마우스 포인터 적용 */
+        .node { cursor: pointer; }
         .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
         .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
 
-        /* 소셜 링크 버튼 스타일 */
         .social-btn { transition: all 0.3s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         .social-btn:hover { transform: translateX(8px); }
     </style>
@@ -55,11 +56,11 @@
         </div>
     </header>
 
+    <button id="global-back-btn" onclick="renderTree('full')" class="hidden fixed top-20 right-4 z-[150] bg-blue-600 hover:bg-blue-500 text-white font-black py-2 px-5 rounded-xl shadow-2xl transition-all border border-white/20 text-sm">
+        ← 전체 계통수
+    </button>
+
     <div class="fixed top-20 left-4 z-[150] flex flex-col gap-3">
-        <button id="global-back-btn" onclick="renderTree('full')" class="hidden bg-blue-600 hover:bg-blue-500 text-white font-black py-2 px-4 rounded-xl shadow-2xl transition-all border border-white/20 text-xs mb-2">
-            ← 전체 계통수
-        </button>
-        
         <a href="http://blog.naver.com/biologue_" target="_blank" class="social-btn flex items-center gap-2 bg-green-600 px-3 py-2 rounded-lg text-[11px] font-black border border-white/10">
             <span class="text-base">📝</span> BLOG
         </a>
@@ -70,7 +71,7 @@
 
     <div id="tree-canvas"></div>
 
-    <div id="info-popup" class="fixed bottom-0 left-0 right-0 z-[200] bg-slate-900/95 border-t border-white/10 p-5 transform translate-y-full opacity-0 transition-all duration-500 backdrop-blur-2xl rounded-t-3xl">
+    <div id="info-popup" class="fixed bottom-0 left-0 right-0 z-[200] bg-slate-900/95 border-t border-white/10 p-5 transform translate-y-full opacity-0 transition-all duration-500 backdrop-blur-2xl rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-start mb-4">
                 <div class="flex gap-4 items-center">
@@ -87,7 +88,7 @@
             <p id="p-desc" class="text-slate-300 text-sm mb-5 leading-relaxed"></p>
             <div id="p-btn-area" class="hidden">
                 <button id="p-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl transition-all text-sm">
-                    상세 분류 탐험하기 🔍
+                    이 분류군 탐험하기 🔍
                 </button>
             </div>
         </div>
@@ -105,7 +106,7 @@
                         features: ["펩티도글리칸", "단세포"],
                         children: [{ 
                             name: "진정세균계", emoji: "🧪", color: "#3b82f6",
-                            desc: "3역 중 진정세균역에 속하는 유일한 계입니다. 지구상 거의 모든 곳에 서식합니다.",
+                            desc: "진정세균역에 속하는 계입니다. 원핵세포 구조를 가지며 전 세계에 분포합니다.",
                             img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400",
                             features: ["무핵", "펩티도글리칸O"]
                         }] 
@@ -115,12 +116,12 @@
                         children: [
                             { 
                                 name: "고세균역", emoji: "🌋", color: "#a855f7",
-                                desc: "극한 환경에 주로 서식하며, 유전자 전사 및 번역 기작이 진핵생물과 유사한 원핵생물입니다.",
+                                desc: "극한 환경에 주로 서식하며, 진핵생물과 유사한 유전 체계를 가진 원핵생물입니다.",
                                 img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400",
                                 features: ["히스톤", "극한환경"],
                                 children: [{ 
                                     name: "고세균계", emoji: "♨️", color: "#a855f7",
-                                    desc: "3역 중 고세균역에 속하는 유일한 계입니다. 메탄생성균, 극호염균 등이 포함됩니다.",
+                                    desc: "고세균역에 속하는 계입니다. 메탄생성균, 고염분 선호균 등이 속합니다.",
                                     img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400",
                                     features: ["펩티도글리칸X", "메탄생성"]
                                 }] 
@@ -157,12 +158,12 @@
             animalia: {
                 name: "동물계", color: "#f59e0b",
                 children: [
-                    { name: "해면동물", key: "배엽X", emoji: "🧽", desc: "가장 원시적인 동물로 조직 분화가 뚜렷하지 않습니다.", img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=400" },
+                    { name: "해면동물", key: "배엽X", emoji: "🧽", desc: "가장 원시적인 동물로 조직 분화가 뚜렷하지 않습니다.", img: "https://via.placeholder.com/400x300/f59e0b/ffffff?text=Sponge" },
                     { name: "진생동물", children: [
-                        { name: "자포동물", key: "2배엽", emoji: "🪼", desc: "방사 대칭을 이루며 촉수를 가집니다.", img: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?auto=format&fit=crop&q=80&w=400" },
+                        { name: "자포동물", key: "2배엽", emoji: "🪼", desc: "방사 대칭을 이루며 촉수를 가집니다.", img: "https://via.placeholder.com/400x300/f59e0b/ffffff?text=Jellyfish" },
                         { name: "3배엽 형성", children: [
-                            { name: "선구동물", children: [{name:"연체/절지", key:"담륜자/탈피", emoji:"🦞", desc: "무척추동물 중심의 거대 분류군"}]},
-                            { name: "후구동물", children: [{name:"극피동물", emoji:"⭐"}, {name:"척삭동물", emoji:"🐟", desc: "사람을 포함한 척추동물 분류군"}]}
+                            { name: "선구동물", children: [{name:"연체/절지", key:"담륜자/탈피", emoji:"🦞", desc: "무척추동물 중심의 분류군"}]},
+                            { name: "후구동물", children: [{name:"극피동물", emoji:"⭐"}, {name:"척삭동물", emoji:"🐟", desc: "척추동물을 포함하는 분류군"}]}
                         ]}
                     ]}
                 ]
@@ -192,7 +193,7 @@
             const treeLayout = d3.tree();
             
             if(isMobile) {
-                treeLayout.nodeSize([110, 150]); 
+                treeLayout.nodeSize([110, 160]); 
             } else {
                 treeLayout.size([window.innerHeight - 250, window.innerWidth - 450]);
             }
@@ -204,36 +205,37 @@
                 .attr("class", "link")
                 .attr("d", linkGen);
 
+            // 노드 그룹 생성 및 클릭 이벤트 통합 적용
             const node = g.selectAll(".node").data(root.descendants()).enter().append("g")
-                .attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`);
+                .attr("class", "node")
+                .attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`)
+                .on("click", (e, d) => showPopup(d.data)); // 이제 글자든 원이든 그룹 전체 클릭 가능!
 
-            node.append("circle").attr("r", 35).attr("class", "node-hitbox").on("click", (e, d) => showPopup(d.data));
-            node.append("circle").attr("r", isMobile ? 6 : 8).style("fill", d => d.data.color || "#475569").style("stroke", "#fff");
+            // 터치 범위를 위한 투명 히트박스
+            node.append("circle").attr("r", 45).attr("class", "node-hitbox");
+            
+            node.append("circle").attr("r", isMobile ? 7 : 9).style("fill", d => d.data.color || "#475569").style("stroke", "#fff");
 
-            // ★ 글자 위치 최적화 (안 겹치게!) ★
+            // 글자 위치 최적화
             node.append("text")
                 .attr("class", "node-label")
                 .attr("dy", (d) => {
-                    if(!isMobile) return d.children ? "-1.8em" : "0.35em"; // PC: 위로 띄우거나 옆으로
+                    if(!isMobile) return d.children ? "-2.0em" : "0.35em";
                     
-                    if(d.children) return "-2.2em"; // 모바일 부모: 더 위로
+                    if(d.children) return "-2.5em";
                     const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
-                    return (siblingIdx % 2 === 0) ? "2.8em" : "4.8em"; // 모바일 자식: 더 멀리 지그재그
+                    return (siblingIdx % 2 === 0) ? "3.2em" : "5.5em"; 
                 })
-                .attr("x", d => isMobile ? 0 : (d.children ? 0 : 25)) // PC 자식: 노드에서 더 오른쪽으로(25px)
+                .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30)) // PC: 원에서 더 멀리 배치
                 .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
-                .style("font-size", d => {
-                    if(isMobile && d.data.name.length >= 5) return "10px";
-                    return isMobile ? "11px" : "14px";
-                })
                 .text(d => (d.data.emoji || "") + " " + d.data.name);
 
             node.filter(d => d.data.key).append("text")
                 .attr("class", "key-label")
                 .attr("dy", (d) => {
-                    if(!isMobile) return "3.2em";
+                    if(!isMobile) return "3.5em";
                     const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
-                    return (siblingIdx % 2 !== 0) ? "6.2em" : "4.2em";
+                    return (siblingIdx % 2 !== 0) ? "6.8em" : "4.5em";
                 })
                 .attr("x", 0).style("text-anchor", "middle").text(d => d.data.key);
 
@@ -252,7 +254,7 @@
             if(!data.desc && !data.id) return;
             const popup = document.getElementById('info-popup');
             document.getElementById('p-title').innerText = (data.emoji || "") + " " + data.name;
-            document.getElementById('p-desc').innerText = data.desc || "상세 분류를 탐험해보세요.";
+            document.getElementById('p-desc').innerText = data.desc || "상세 정보를 확인해보세요.";
             document.getElementById('p-img').src = data.img || "https://via.placeholder.com/400x300/1e293b/ffffff?text=BioLogue";
             
             document.getElementById('p-tags').innerHTML = (data.features || []).map(f => `<span class="bg-blue-500/30 px-2 py-0.5 rounded-full text-[10px] text-blue-100 border border-blue-400/30">#${f}</span>`).join('');
@@ -260,7 +262,7 @@
             const btnArea = document.getElementById('p-btn-area');
             const btn = document.getElementById('p-btn');
             btnArea.classList.toggle('hidden', !data.id);
-            btn.onclick = () => { closePopup(); renderTree(data.id); };
+            btn.onclick = (e) => { e.stopPropagation(); closePopup(); renderTree(data.id); };
 
             popup.classList.add('popup-active');
         }
