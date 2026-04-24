@@ -12,8 +12,10 @@
         body, html { margin:0; padding:0; width:100%; height:100%; background-color:#020617; color:#ffffff; font-family:'Pretendard', sans-serif; overflow:hidden; touch-action: none; }
         #tree-canvas { width: 100vw; height: 100vh; }
         
+        /* 가지(Link) 스타일 */
         .link { fill: none; stroke: #475569; stroke-width: 2.5px; stroke-opacity: 0.4; transition: all 0.5s ease; }
         
+        /* 노드 레이블 (외곽선 가독성) */
         .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; pointer-events: none; }
         @media (max-width: 768px) { .node-label { font-size: 11px; } }
 
@@ -26,8 +28,8 @@
         .social-btn { transition: all 0.3s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         .social-btn:hover { transform: translateX(8px); }
 
-        /* 하단 정보 박스 스타일 */
-        .info-box { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        /* 하단 정보 박스 스타일 (반투명 블러 효과) */
+        .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
     </style>
 </head>
 <body>
@@ -35,7 +37,7 @@
     <header class="fixed top-0 left-0 right-0 p-4 bg-slate-950/80 backdrop-blur-md z-[100] border-b border-white/10 flex justify-between items-center">
         <h1 class="text-lg font-black flex items-center gap-2"><span class="text-blue-500 text-xl">🧬</span> BioLogue Phylogenetic Tree</h1>
         <div class="text-[9px] text-slate-500 font-bold tracking-widest uppercase text-right leading-tight">
-            Phylogenetic Tree<br>by Yoon Ji Young
+            Education Dashboard<br>by Yoon Ji Young
         </div>
     </header>
 
@@ -54,17 +56,24 @@
 
     <div id="tree-canvas"></div>
 
-    <div class="fixed bottom-12 left-4 right-4 md:left-8 md:right-auto md:w-80 z-[120] info-box p-4 rounded-2xl shadow-xl fade-in">
-        <h4 class="text-xs font-black text-blue-400 mb-2 uppercase tracking-tighter">Tree Information</h4>
-        <p class="text-[11px] text-slate-300 leading-relaxed">
+    <div class="fixed bottom-14 left-4 right-4 
+                md:left-8 md:right-auto md:w-[500px] 
+                lg:w-[700px] xl:w-[850px] 
+                z-[120] info-box p-6 lg:p-10 rounded-3xl shadow-2xl fade-in border border-white/5">
+        
+        <h4 class="text-xs md:text-sm lg:text-base font-black text-blue-400 mb-3 lg:mb-5 uppercase tracking-widest">
+            Tree Information
+        </h4>
+
+        <p class="text-[13px] md:text-base lg:text-lg xl:text-xl text-slate-200 leading-relaxed font-medium">
             본 계통수는 <b>rRNA(리보솜 RNA) 염기 서열 분석</b>에 기초한 최신 분류 체계를 바탕으로 작성되었습니다. <br><br>
-            데이터 오류나 보완이 필요한 부분이 있다면 언제든 아래의 '문의하기'를 통해 알려주시면 감사하겠습니다!
+            각 노드를 클릭하면 해당 분류군의 주요 특징과 이미지를 확인할 수 있으며, 데이터 오류나 보완이 필요한 부분은 아래 '문의하기'를 이용해 주세요!
         </p>
     </div>
 
     <footer class="fixed bottom-0 left-0 right-0 h-10 bg-slate-950/90 flex items-center justify-center z-[130] border-t border-white/5">
         <p class="text-[10px] text-slate-500 font-medium">
-            © Copyright 2026 All rights reserved by BioLogist 
+            © Copyright 2026 All rights reserved by BioLogist 
             <a href="https://www.instagram.com/biologist_logue" target="_blank" class="ml-2 text-blue-400 hover:text-blue-300 font-bold decoration-dotted underline underline-offset-4 tracking-tighter">
                 문의하기 >
             </a>
@@ -72,7 +81,8 @@
     </footer>
 
     <div id="info-popup" class="fixed bottom-0 left-0 right-0 z-[200] bg-slate-900/95 border-t border-white/10 p-5 transform translate-y-full opacity-0 transition-all duration-500 backdrop-blur-2xl rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-        <div class="max-w-4xl mx-auto pb-10"> <div class="flex justify-between items-start mb-4">
+        <div class="max-w-4xl mx-auto pb-10">
+            <div class="flex justify-between items-start mb-4">
                 <div class="flex gap-4 items-center">
                     <div class="w-24 h-20 md:w-40 md:h-28 bg-slate-800 rounded-xl overflow-hidden border border-white/10 shadow-lg shrink-0">
                         <img id="p-img" src="" class="w-full h-full object-cover">
@@ -94,7 +104,6 @@
     </div>
 
     <script>
-        /* treeData 데이터 부분은 V17과 동일하게 유지 (분량상 생략, 주인님 코드 그대로 쓰시면 됩니다) */
         const treeData = {
             full: {
                 name: "LIFE", color: "#64748b",
@@ -104,27 +113,17 @@
                         desc: "세포벽에 펩티도글리칸이 있는 원핵생물군입니다. 대장균, 남세균 등이 속합니다.",
                         img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400",
                         features: ["펩티도글리칸", "단세포"],
-                        children: [{ 
-                            name: "진정세균계", emoji: "🧪", color: "#3b82f6",
-                            desc: "진정세균역에 속하는 계입니다. 원핵세포 구조를 가지며 전 세계에 분포합니다.",
-                            img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400",
-                            features: ["무핵", "펩티도글리칸O"]
-                        }] 
+                        children: [{ name: "진정세균계", emoji: "🧪", color: "#3b82f6", desc: "원핵세포 구조를 가지며 전 세계에 분포하는 세균류입니다.", features: ["무핵", "펩티도글리칸O"], img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400" }] 
                     },
                     { 
                         name: "Archaea/Eukarya", color: "#475569", 
                         children: [
                             { 
                                 name: "고세균역", emoji: "🌋", color: "#a855f7",
-                                desc: "극한 환경에 주로 서식하며, 진핵생물과 유사한 유전 체계를 가진 원핵생물입니다.",
+                                desc: "극한 환경에 주로 서식하며 진핵생물과 유사한 유전 체계를 가진 원핵생물입니다.",
                                 img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400",
                                 features: ["히스톤", "극한환경"],
-                                children: [{ 
-                                    name: "고세균계", emoji: "♨️", color: "#a855f7",
-                                    desc: "고세균역에 속하는 계입니다. 메탄생성균, 고염분 선호균 등이 속합니다.",
-                                    img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400",
-                                    features: ["펩티도글리칸X", "메탄생성"]
-                                }] 
+                                children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", desc: "고염분, 고온 등 일반 생물이 살기 힘든 곳에 서식합니다.", features: ["펩티도글리칸X"], img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400" }] 
                             },
                             { 
                                 name: "진핵생물역", emoji: "🌿", color: "#10b981", 
@@ -162,7 +161,7 @@
                     { name: "진생동물", children: [
                         { name: "자포동물", key: "2배엽", emoji: "🪼", desc: "방사 대칭을 이루며 촉수를 가집니다.", img: "https://via.placeholder.com/400x300/f59e0b/ffffff?text=Jellyfish" },
                         { name: "3배엽 형성", children: [
-                            { name: "선구동물", children: [{name:"연체/절지", key:"담륜자/탈피", emoji:"🦞", desc: "무척추동물 중심의 분류군"}]},
+                            { name: "선구동물", children: [{name:"연체/절지", key:"담륜자/탈피", emoji:"🦞", desc: "무척추동물 중심 분류군"}]},
                             { name: "후구동물", children: [{name:"극피동물", emoji:"⭐"}, {name:"척삭동물", emoji:"🐟", desc: "척추동물을 포함하는 분류군"}]}
                         ]}
                     ]}
@@ -187,18 +186,23 @@
             const data = treeData[level];
             const isMobile = window.innerWidth < 768;
             document.getElementById('global-back-btn').style.display = (level === 'full') ? 'none' : 'block';
+            
             const root = d3.hierarchy(data);
             const treeLayout = d3.tree();
             if(isMobile) { treeLayout.nodeSize([110, 160]); } 
             else { treeLayout.size([window.innerHeight - 250, window.innerWidth - 450]); }
             treeLayout(root);
+
             const linkGen = isMobile ? d3.linkVertical().x(d => d.x).y(d => d.y) : d3.linkHorizontal().x(d => d.y).y(d => d.x);
             g.selectAll(".link").data(root.links()).enter().append("path").attr("class", "link").attr("d", linkGen);
+
             const node = g.selectAll(".node").data(root.descendants()).enter().append("g")
                 .attr("class", "node").attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`)
                 .on("click", (e, d) => showPopup(d.data));
+
             node.append("circle").attr("r", 45).attr("class", "node-hitbox");
             node.append("circle").attr("r", isMobile ? 7 : 9).style("fill", d => d.data.color || "#475569").style("stroke", "#fff");
+            
             node.append("text").attr("class", "node-label")
                 .attr("dy", (d) => {
                     if(!isMobile) return d.children ? "-2.0em" : "0.35em";
@@ -209,6 +213,7 @@
                 .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30))
                 .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
                 .text(d => (d.data.emoji || "") + " " + d.data.name);
+
             node.filter(d => d.data.key).append("text").attr("class", "key-label")
                 .attr("dy", (d) => {
                     if(!isMobile) return "3.5em";
@@ -216,6 +221,7 @@
                     return (siblingIdx % 2 !== 0) ? "6.8em" : "4.5em";
                 })
                 .attr("x", 0).style("text-anchor", "middle").text(d => d.data.key);
+
             const bounds = g.node().getBBox();
             const parentRect = svg.node().getBoundingClientRect();
             const scale = 0.75 / Math.max(bounds.width / parentRect.width, bounds.height / parentRect.height);
