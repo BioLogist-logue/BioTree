@@ -224,7 +224,7 @@
                     
                     if(d.children) return "-2.5em";
                     const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
-                    return (siblingIdx % 2 === 0) ? "3.2em" : "4.5em"; 
+                    return (siblingIdx % 2 === 0) ? "3.2em" : "3.5em"; 
                 })
                 .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30)) // PC: 원에서 더 멀리 배치
                 .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
