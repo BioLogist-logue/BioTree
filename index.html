@@ -21,6 +21,13 @@
         .social-btn { transition: all 0.3s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         .social-btn:hover { transform: translateX(8px); }
         .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
+        
+        /* 팝업 관련 스타일 */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #contact-popup.active { display: flex !important; animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -48,7 +55,7 @@
     <div class="fixed bottom-14 left-4 right-4 md:left-8 md:right-auto md:w-[500px] lg:w-[600px] xl:w-[750px] z-[120] info-box p-6 lg:p-10 rounded-3xl shadow-xl border border-white/5">
         <h4 class="text-xs md:text-sm lg:text-base font-black text-blue-400 mb-3 lg:mb-5 uppercase tracking-widest">Tree Information</h4>
         <p class="text-[13px] md:text-base lg:text-lg xl:text-xl text-slate-200 leading-relaxed font-medium">
-            본 계통수는 <b>rRNA(리보솜 RNA) 염기 서열 분석</b>에 기초한 3역 6계 분류 체계를 바탕으로 작성되었습니다. 동아출판 고등학교 생명과학 교과서 기준으로 동물계, 식물계의 경우 '문' 수준 분류군까지 보여줍니다. <br><br>
+            본 계통수는 <b>rRNA(리보솜 RNA) 염기 서열 분석</b>에 기초한 3역 6계 분류 체계를 바탕으로 작성되었습니다. 동아출판 고등학교 생명과학 교과서 기준으로 동물계, 식물계의 문 수준 분류군까지 보여줍니다. <br><br>
             각 노드를 클릭하면 해당 분류군의 주요 특징과 이미지를 확인할 수 있습니다.
         </p>
     </div>
@@ -56,7 +63,7 @@
     <footer class="fixed bottom-0 left-0 right-0 h-10 bg-slate-950/90 flex items-center justify-center z-[130] border-t border-white/5">
         <p class="text-[10px] text-slate-500 font-medium">
             © Copyright 2026 All rights reserved by BioLogist 
-            <a href="#" onclick="openContact(event)" class="ml-2 text-blue-400 hover:text-blue-300 font-bold decoration-dotted underline underline-offset-4 tracking-tighter">
+            <a href="javascript:void(0);" onclick="openContact(event)" class="ml-2 text-blue-400 hover:text-blue-300 font-bold decoration-dotted underline underline-offset-4 tracking-tighter">
                 문의하기 >
             </a>
         </p>
@@ -71,7 +78,7 @@
                     </div>
                     <div>
                         <h2 id="p-title" class="text-xl md:text-2xl font-black text-white"></h2>
-                        <div id="p-tags" class="flex flex-wrap gap-1 mt-2"></div>
+                        <div id="p-tags" class="flex flex-wrap gap-1 mt-1"></div>
                     </div>
                 </div>
                 <button onclick="closePopup()" class="text-slate-500 hover:text-white p-2 text-xl">✕</button>
@@ -92,7 +99,7 @@
                 </h3>
                 <button onclick="closeContact()" class="text-slate-400 hover:text-white text-2xl px-2">✕</button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar bg-white" style="min-height: 400px;"> 
+            <div class="p-6 overflow-y-auto custom-scrollbar bg-white" style="min-height: 450px;"> 
                 <livere-comment client-id="VmbvXdOPKvdhtL3IdAFC"></livere-comment>
                 <script type="module" src="https://www.livere.org/livere-widget.js"></script>
             </div>
@@ -103,29 +110,28 @@
     </div>
 
     <script>
-        // treeData는 주인님이 주신 최신 데이터를 100% 보존했습니다!
         const treeData = {
             full: {
                 name: "LIFE", color: "#ffffff",
                 children: [
                     { 
                         name: "진정세균역", emoji: "🧫", color: "#9a1818", 
-                        children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵생물", "펩티도글리칸", "원형DNA"], desc: "단세포 원핵생물로 주로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 있다. 대부분 종속영양생물이지만 남세균처럼 광합성을 하는 독립영양생물도 있다. 대부분의 세균은 세균역에 속한다.", img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400" }] 
+                        children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸", "원형DNA"], desc: "단세포 원핵생물군입니다.", img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400" }] 
                     },
                     { 
                         name: "Archaea/Eukarya", color: "#475569", 
                         children: [
                             { 
                                 name: "고세균역", emoji: "🌋", color: "#751f79",
-                                children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", features: ["극한환경", "히스톤단백질", "펩티도글리칸X"], desc: "극한지에 서식하는 원핵생물입니다.", img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400" }] 
+                                children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", features: ["극한환경", "히스톤"], desc: "극한지에 서식하는 원핵생물입니다.", img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400" }] 
                             },
                             { 
                                 name: "진핵생물역", emoji: "🌿", color: "#1b2082", 
                                 children: [
-                                    { name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["진핵세포", "단세포중심"], desc: "단세포 진핵생물 중심의 무리입니다.", img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=400" },
-                                    { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양", "셀룰로스"], desc: "광합성을 하는 다세포 독립영양 생물입니다." },
-                                    { name: "균계", emoji: "🍄", color: "#1aefe4", features: ["흡수식종속영양", "키틴"], desc: "분해 흡수 종속영양 생물입니다." },
-                                    { name: "동물계", id: "animalia", emoji: "🦁", color: "#eae361", features: ["섭식형종속영양", "운동성O"], desc: "다세포 종속영양 동물입니다." }
+                                    { name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["진핵세포"], desc: "단세포 진핵생물 중심 무리입니다." },
+                                    { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양"] },
+                                    { name: "균계", emoji: "🍄", color: "#1aefe4", features: ["흡수식종속영양"] },
+                                    { name: "동물계", id: "animalia", emoji: "🦁", color: "#eae361", features: ["섭식형종속영양"] }
                                 ]
                             }
                         ]
@@ -135,20 +141,20 @@
             plantae: {
                 name: "식물계", color: "#22c55e",
                 children: [
-                    { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["이끼류", "헛뿌리"] },
+                    { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["이끼류"] },
                     { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"] }, 
                     { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"] },
                     { name: "관다발 식물", color: "#276e1a", children: [
-                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "포자번식"] },
-                        { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송", "소엽"] },
+                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리"] },
+                        { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송"] },
                         { name: "종자 식물", color: "#92d113", children: [
                             { name: "나자식물", color: "#007534", children: [
-                                { name: "은행식물문", emoji: "🌲", color: "#e9e910", features: ["밑씨노출"] },
-                                { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["상록성"] },
-                                { name: "구과식물문", emoji: "🌲", color: "#c17c14", features: ["바늘잎"] },
-                                { name: "마황식물문", emoji: "🌲", color: "#ecc117", features: ["마황"] }
+                                { name: "은행식물문", emoji: "🌲", color: "#e9e910" },
+                                { name: "소철식물문", emoji: "🌲", color: "#92e910" },
+                                { name: "구과식물문", emoji: "🌲", color: "#c17c14" },
+                                { name: "마황식물문", emoji: "🌲", color: "#ecc117" }
                             ]},
-                            { name: "속씨식물", key: "씨방O", emoji: "🌸", color: "#f472b6", features: ["중복수정", "씨방O"] }
+                            { name: "속씨식물", key: "씨방O", emoji: "🌸", color: "#f472b6", features: ["중복수정"] }
                         ]}
                     ]}
                 ]
@@ -156,9 +162,9 @@
             animalia: {
                 name: "동물계", color: "#f59e0b",
                 children: [
-                    { name: "해면동물", key: "배엽X", emoji: "🧽", color: "#eaea5b", desc: "조직 분화가 거의 없는 원시적인 동물입니다.", features: ["무배엽", "포로세포"] },
+                    { name: "해면동물", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽"] },
                     { name: "진생동물", color: "#e85e5e", children: [
-                        { name: "자포동물", key: "2배엽", emoji: "🪼", color: "#5e65e8", desc: "방사 대칭을 이루며 자포를 가집니다.", features: ["2배엽", "방사대칭"] },
+                        { name: "자포동물", key: "2배엽", emoji: "🪼", color: "#5e65e8", features: ["방사대칭"] },
                         { name: "3배엽 형성", children: [
                             { 
                                 name: "선구동물", color: "#8224e3",
@@ -166,16 +172,16 @@
                                     {
                                         name: "촉수관/담륜자", color: "#fc0202",
                                         children: [
-                                            { name: "편형동물문", emoji: "🐛", color: "#38ee9d", desc: "플라나리아 등 편평한 몸의 동물입니다.", features: ["무체강", "불꽃세포"] },
-                                            { name: "연체동물문", emoji: "🐚", color: "#c9d3d0", desc: "달팽이, 문어 등 부드러운 몸의 동물입니다.", features: ["진체강", "외투막"] },
-                                            { name: "환형동물문", emoji: "🪱", color: "#f47960", desc: "지렁이 등 마디가 있는 동물입니다.", features: ["진체강", "체절"] }
+                                            { name: "편형동물문", emoji: "🐛", color: "#38ee9d", features: ["무체강"] },
+                                            { name: "연체동물문", emoji: "🐚", color: "#c9d3d0", features: ["외투막"] },
+                                            { name: "환형동물문", emoji: "🪱", color: "#f47960", features: ["체절"] }
                                         ]
                                     },
                                     { 
                                         name: "탈피동물", color: "#fc0202",
                                         children: [
-                                            { name: "선형동물문", emoji: "🪱", color: "#f47960", desc: "기생충 등 원통형 몸의 동물입니다.", features: ["의체강", "탈피"] },
-                                            { name: "절지동물문", emoji: "🦀", color: "#f537d9", desc: "곤충, 게 등 딱딱한 외골격의 동물입니다.", features: ["진체강", "키틴질외골격"] }
+                                            { name: "선형동물문", emoji: "🪱", color: "#f47960", features: ["탈피"] },
+                                            { name: "절지동물문", emoji: "🦀", color: "#f537d9", features: ["외골격"] }
                                         ]
                                     }
                                 ]
@@ -183,8 +189,8 @@
                             { 
                                 name: "후구동물", color: "#8224e3",
                                 children: [
-                                    { name: "극피동물문", emoji: "⭐", color: "#fcfc02", desc: "불가사리, 성게 등 가시 피부의 동물입니다.", features: ["수관계", "2차방사대칭"] }, 
-                                    { name: "척삭동물문", emoji: "🐟", color: "#02fcef", desc: "사람을 포함한 등뼈가 있는 동물입니다.", features: ["척삭", "신경색"] }
+                                    { name: "극피동물문", emoji: "⭐", color: "#fcfc02", features: ["수관계"] }, 
+                                    { name: "척삭동물문", emoji: "🐟", color: "#02fcef", features: ["척삭"] }
                                 ]
                             }
                         ]}
@@ -248,16 +254,13 @@
             if(!data.desc && !data.id && !data.features) return; 
             const popup = document.getElementById('info-popup');
             document.getElementById('p-title').innerText = (data.emoji || "") + " " + data.name;
-            document.getElementById('p-desc').innerText = data.desc || "상세 분류 특징을 확인해 보세요.";
+            document.getElementById('p-desc').innerText = data.desc || "상세 정보가 아직 없습니다.";
             document.getElementById('p-img').src = data.img || "https://via.placeholder.com/400x300/1e293b/ffffff?text=BioLogue";
             
-            // ★ 해시태그(features) 로직 완벽 복구
             const tagsArea = document.getElementById('p-tags');
             if (data.features && data.features.length > 0) {
                 tagsArea.innerHTML = data.features.map(f => `<span class="bg-blue-500/30 px-2 py-0.5 rounded-full text-[10px] text-blue-100 border border-blue-400/30 font-bold">#${f}</span>`).join('');
-            } else {
-                tagsArea.innerHTML = '';
-            }
+            } else { tagsArea.innerHTML = ''; }
 
             const btnArea = document.getElementById('p-btn-area');
             const btn = document.getElementById('p-btn');
@@ -267,24 +270,20 @@
         }
         window.closePopup = () => document.getElementById('info-popup').classList.remove('popup-active');
 
-        // 라이브리 팝업 제어 함수
-        function openContact(e) {
-            if(e) e.preventDefault();
+        // ★ 납치 방지 팝업 제어 함수 ★
+        window.openContact = function(e) {
+            if(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             document.getElementById('contact-popup').classList.add('active');
             document.body.style.overflow = 'hidden';
-        }
-        function closeContact() {
+            return false;
+        };
+        window.closeContact = function() {
             document.getElementById('contact-popup').classList.remove('active');
             document.body.style.overflow = 'auto';
-        }
+        };
     </script>
-
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        #contact-popup.active { display: flex !important; animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    </style>
 </body>
 </html>
