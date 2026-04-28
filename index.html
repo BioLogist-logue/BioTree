@@ -2,98 +2,171 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioLogue - 생명의 나무 (rRNA 계통수) (V21 수리완료)</title>
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BioLogue - 생물 분류체계🌿 (V23)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
-        body { font-family: 'Pretendard', sans-serif; background-color: #020617; color: #ffffff; margin: 0; overflow: hidden; }
+        body, html { margin:0; padding:0; width:100%; height:100%; background-color:#020617; color:#ffffff; font-family:'Pretendard', sans-serif; overflow:hidden; touch-action: none; }
         #tree-canvas { width: 100vw; height: 100vh; }
-        .node circle { fill: #1e293b; stroke-width: 2.5px; stroke: #fff; transition: all 0.2s; cursor: pointer; }
-        .node text { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; pointer-events: none; }
-        .node--leaf text { font-size: 12px; font-weight: normal; }
-        .link { fill: none; stroke: #475569; stroke-width: 2.5px; stroke-opacity: 0.4; }
-        .node:hover circle { stroke-width: 4px; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6)); }
-        .feature-text { font-size: 10px; fill: #94a3b8 !important; font-weight: 800; stroke: #000000; stroke-width: 3px; pointer-events: none; }
+        .link { fill: none; stroke: #475569; stroke-width: 2.5px; stroke-opacity: 0.4; transition: all 0.5s ease; }
+        
+        /* ★ 수리 완료: 글자 테두리가 겹쳐서 잘려 보이지 않게 처리 ★ */
+        .node-label { 
+            font-size: 14px; 
+            font-weight: 900; 
+            fill: #ffffff !important; 
+            paint-order: stroke; 
+            stroke: #000000; 
+            stroke-width: 4px; 
+            stroke-linejoin: round; 
+            pointer-events: none; 
+        }
+        @media (max-width: 768px) { .node-label { font-size: 11px; } }
+        
+        .key-label { font-size: 10px; fill: #94a3b8 !important; font-weight: 800; stroke: #000000; stroke-width: 3px; pointer-events: none; }
+        .node { cursor: pointer; }
+        .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
+        .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
+        .social-btn { transition: all 0.3s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        .social-btn:hover { transform: translateX(8px); }
+        .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #contact-popup.active { display: flex !important; animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <header class="fixed top-0 left-0 right-0 p-4 bg-slate-950/80 backdrop-blur-md z-[100] border-b border-white/10 flex justify-between items-center">
-        <h1 class="text-lg font-black flex items-center gap-2"><span class="text-blue-500 text-xl">🧬</span> BioLogue Phylogenetic Tree</h1>
+        <h1 class="text-lg font-black flex items-center gap-2"><span class="text-blue-500 text-xl">🧬</span> Biologue Phylogenetic Tree</h1>
         <div class="text-[9px] text-slate-500 font-bold tracking-widest uppercase text-right leading-tight">Education Dashboard<br>by BioLogist</div>
     </header>
 
+    <button id="global-back-btn" onclick="renderTree('full')" class="hidden fixed top-20 right-4 z-[150] bg-blue-600 hover:bg-blue-500 text-white font-black py-2 px-5 rounded-xl shadow-2xl transition-all border border-white/20 text-sm">
+        ← 전체 계통수
+    </button>
+
+    <div class="fixed top-20 left-4 z-[150] flex flex-col gap-3">
+        <a href="http://blog.naver.com/biologue_" target="_blank" class="social-btn flex items-center gap-2 bg-green-600 px-3 py-2 rounded-lg text-[11px] font-black border border-white/10">
+            <span class="text-base">📝</span> Blog
+        </a>
+        <a href="https://www.instagram.com/biologist_logue" target="_blank" class="social-btn flex items-center gap-2 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 px-3 py-2 rounded-lg text-[11px] font-black border border-white/10">
+            <span class="text-base">📸</span> Insta
+        </a>
+    </div>
+
     <div id="tree-canvas"></div>
 
-    <div id="details-panel" class="hidden fixed bottom-14 left-4 right-4 md:left-8 md:right-auto md:w-[500px] lg:w-[600px] xl:w-[750px] z-[120] info-box p-6 lg:p-10 rounded-3xl shadow-xl border border-white/5 bg-slate-900/60 backdrop-blur-xl">
-        <button onclick="closeDetails()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl p-2 z-[130]">✕</button>
-        
-        <div id="details-content" class="space-y-4">
-            <h4 class="text-xs md:text-sm lg:text-base font-black text-blue-400 mb-3 lg:mb-5 uppercase tracking-widest">Tree Information</h4>
-            <p class="text-[13px] md:text-base lg:text-lg xl:text-xl text-slate-200 leading-relaxed font-medium">
-                본 계통수는 <b>rRNA(리보솜 RNA) 염기 서열 분석</b>에 기초한 3역 6계 분류 체계를 바탕으로 작성되었습니다. 동아출판 고등학교 생명과학 교과서 기준으로 동물계, 식물계의 경우 '문' 수준 분류군까지 보여줍니다. <br><br>
-                각 노드를 클릭하면 해당 분류군의 주요 특징과 이미지를 확인할 수 있습니다.
-            </p>
-        </div>
+    <div class="fixed bottom-14 left-4 right-4 md:left-8 md:right-auto md:w-[500px] lg:w-[600px] xl:w-[750px] z-[120] info-box p-6 lg:p-10 rounded-3xl shadow-xl border border-white/5">
+        <button onclick="this.parentElement.style.display='none'" class="absolute top-4 right-6 text-slate-400 hover:text-white text-2xl transition-colors">✕</button>
+        <h4 class="text-xs md:text-sm lg:text-base font-black text-blue-400 mb-3 lg:mb-5 uppercase tracking-widest">Tree Information</h4>
+        <p class="text-[13px] md:text-base lg:text-lg xl:text-xl text-slate-200 leading-relaxed font-medium">
+            본 계통수는 <b>rRNA(리보솜 RNA) 염기 서열 분석</b>에 기초한 3역 6계 분류 체계를 바탕으로 작성되었습니다. 동아출판 고등학교 생명과학 교과서 기준으로 동물계, 식물계의 문 수준 분류군까지 보여줍니다. <br><br>
+            각 노드를 클릭하면 해당 분류군의 주요 특징과 이미지를 확인할 수 있습니다.
+        </p>
     </div>
 
     <footer class="fixed bottom-0 left-0 right-0 h-10 bg-slate-950/90 flex items-center justify-center z-[130] border-t border-white/5">
         <p class="text-[10px] text-slate-500 font-medium">
             © Copyright 2026 All rights reserved by BioLogist 
-            <a href="https://www.instagram.com/biologist_logue" target="_blank" class="ml-2 text-blue-400 hover:text-blue-300 font-bold decoration-dotted underline underline-offset-4 tracking-tighter">문의하기 ></a>
+            <a href="javascript:void(0);" onclick="openContact(event)" class="ml-2 text-blue-400 hover:text-blue-300 font-bold decoration-dotted underline underline-offset-4 tracking-tighter">
+                문의하기 >
+            </a>
         </p>
     </footer>
 
-    <script>
-        // --- 데이터 무결성 보존: 주인님이 수정한 최신 데이터를 100% 그대로 사용합니다! ---
-        const treeData = {
-            name: "LIFE", color: "#64748b",
-            children: [
-                { 
-                    name: "진정세균역", emoji: "🧫", color: "#9a1818", 
-                    children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸", "원형DNA"], desc: "단세포 원핵생물로 주로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 있다. 대부분 종속영양생물이지만 남세균처럼 광합성을 하는 독립영양생물도 있다. 대부분의 세균은 세균역에 속한다.", img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400" }] 
-                },
-                { 
-                    name: "Archaea/Eukarya", color: "#475569", 
-                    children: [
-                        { 
-                            name: "고세균역", emoji: "🌋", color: "#751f79",
-                            children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", features: ["극한환경", "히스톤단백질", "펩티도글리칸X"], desc: "극한지에 서식하는 원핵생물입니다.", img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400" }] 
-                        },
-                        { 
-                            name: "진핵생물역", emoji: "🌿", color: "#1b2082", 
-                            children: [
-                                { name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["진핵세포", "단세포중심"], desc: "단세포 진핵생물 중심의 무리입니다.", img: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=400" },
-                                { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양", "셀룰로스"], desc: "광합성을 하는 다세포 독립영양 생물입니다." },
-                                { name: "균계", emoji: "🍄", color: "#1aefe4", features: ["흡수식종속영양", "키틴"], desc: "분해 흡수 종속영양 생물입니다." },
-                                { name: "동물계", id: "animalia", emoji: "🦁", color: "#eae361", features: ["섭식형종속영양", "운동성O"], desc: "다세포 종속영양 동물입니다." }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
+    <div id="info-popup" class="fixed bottom-0 left-0 right-0 z-[200] bg-slate-900/95 border-t border-white/10 p-5 transform translate-y-full opacity-0 transition-all duration-500 backdrop-blur-2xl rounded-t-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+        <div class="max-w-4xl mx-auto pb-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex gap-4 items-center">
+                    <div class="w-24 h-20 md:w-40 md:h-28 bg-slate-800 rounded-xl overflow-hidden border border-white/10 shadow-lg shrink-0">
+                        <img id="p-img" src="" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h2 id="p-title" class="text-xl md:text-2xl font-black text-white"></h2>
+                        <div id="p-tags" class="flex flex-wrap gap-1 mt-1"></div>
+                    </div>
+                </div>
+                <button onclick="closePopup()" class="text-slate-500 hover:text-white p-2 text-xl">✕</button>
+            </div>
+            <p id="p-desc" class="text-slate-300 text-sm mb-5 leading-relaxed"></p>
+            <div id="p-btn-area" class="hidden">
+                <button id="p-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl shadow-xl transition-all text-sm">이 분류군 탐험하기 🔍</button>
+            </div>
+        </div>
+    </div>
 
-        const detailsPanelsData = {
+    <div id="contact-popup" class="fixed inset-0 z-[300] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="closeContact()"></div>
+        <div class="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="p-5 border-b border-white/5 flex justify-between items-center bg-slate-800/50">
+                <h3 class="text-base font-black text-white flex items-center gap-2">
+                    <span class="text-blue-400 text-xl">💬</span> Biologue - 생물 계통수에 의견 남기기
+                </h3>
+                <button onclick="closeContact()" class="text-slate-400 hover:text-white text-2xl px-2">✕</button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar bg-white" style="min-height: 450px;"> 
+                <livere-comment client-id="VmbvXdOPKvdhtL3IdAFC"></livere-comment>
+                <script type="module" src="https://www.livere.org/livere-widget.js"></script>
+            </div>
+            <div class="p-3 bg-slate-900 text-center border-t border-white/5">
+                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Community Powered by LiveRe</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const treeData = {
+            full: {
+                name: "LIFE", color: "#ffffff",
+                children: [
+                    { 
+                        name: "진정세균역", emoji: "🧫", color: "#9a1818", 
+                        children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸", "원형DNA"], desc: "단세포 원핵생물군입니다.", img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400" }] 
+                    },
+                    { 
+                        name: "Archaea/Eukarya", color: "#475569", 
+                        children: [
+                            { 
+                                name: "고세균역", emoji: "🌋", color: "#751f79",
+                                children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", features: ["극한환경", "히스톤"], desc: "극한지에 서식하는 원핵생물입니다.", img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400" }] 
+                            },
+                            { 
+                                name: "진핵생물역", emoji: "🌿", color: "#1b2082", 
+                                children: [
+                                    { name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["진핵세포"], desc: "단세포 진핵생물 중심 무리입니다." },
+                                    { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양"] },
+                                    { name: "균계", emoji: "🍄", color: "#1aefe4", features: ["흡수식종속영양"] },
+                                    { name: "동물계", id: "animalia", emoji: "🦁", color: "#eae361", features: ["섭식형종속영양"] }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
             plantae: {
                 name: "식물계", color: "#22c55e",
                 children: [
-                    { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["이끼류", "헛뿌리"], desc: "관다발 식물에 속하지 않는 원시 식물군입니다." },
-                    { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"], desc: "몸이 납작하고 우산 모양의 포자체를 가집니다." }, 
-                    { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"], desc: "가늘고 긴 가시 모양의 포자체를 가집니다." },
+                    { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["이끼류"] },
+                    { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"] }, 
+                    { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"] },
                     { name: "관다발 식물", color: "#276e1a", children: [
-                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "포자번식"], desc: "관다발이 있는 포자 생물입니다." },
-                        { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송", "소엽"], desc: "가장 오래된 관다발 식물 계통입니다." },
+                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리"] },
+                        { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송"] },
                         { name: "종자 식물", color: "#92d113", children: [
                             { name: "나자식물", color: "#007534", children: [
-                                { name: "은행식물문", emoji: "🌲", color: "#e9e910", features: ["밑씨노출"], desc: "밑씨가 씨방에 쌓여있지 않은 겉씨식물입니다." },
-                                { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["상록성"], desc: "나자식물 중 가장 원시적인 무리 중 하나입니다." },
-                                { name: "구과식물문", emoji: "🌲", color: "#c17c14", features: ["바늘잎"], desc: "소나무, 잣나무 등 바늘잎을 가진 식물입니다." },
-                                { name: "마황식물문", emoji: "🌲", color: "#ecc117", features: ["마황"], desc: "겉씨식물 중 가장 진화한 형태를 가집니다." }
+                                { name: "은행식물문", emoji: "🌲", color: "#e9e910" },
+                                { name: "소철식물문", emoji: "🌲", color: "#92e910" },
+                                { name: "구과식물문", emoji: "🌲", color: "#c17c14" },
+                                { name: "마황식물문", emoji: "🌲", color: "#ecc117" }
                             ]},
-                            { name: "속씨식물", key: "씨방O", emoji: "🌸", color: "#f472b6", features: ["중복수정", "씨방O"], desc: "꽃과 씨방을 가진 가장 진화한 식물군입니다." }
+                            { name: "속씨식물", key: "씨방O", emoji: "🌸", color: "#f472b6", features: ["중복수정"] }
                         ]}
                     ]}
                 ]
@@ -101,9 +174,9 @@
             animalia: {
                 name: "동물계", color: "#f59e0b",
                 children: [
-                    { name: "해면동물", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽"], desc: "조직 분화가 없는 원시적인 동물입니다." },
+                    { name: "해면동물", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽"] },
                     { name: "진생동물", color: "#e85e5e", children: [
-                        { name: "자포동물", key: "2배엽", emoji: "🪼", color: "#5e65e8", features: ["2배엽", "방사대칭"], desc: "자포를 가지며 방사 대칭을 이룹니다." },
+                        { name: "자포동물", key: "2배엽", emoji: "🪼", color: "#5e65e8", features: ["방사대칭"] },
                         { name: "3배엽 형성", children: [
                             { 
                                 name: "선구동물", color: "#8224e3",
@@ -111,16 +184,16 @@
                                     {
                                         name: "촉수관/담륜자", color: "#fc0202",
                                         children: [
-                                            { name: "편형동물문", emoji: "🐛", color: "#38ee9d", features: ["무체강"], desc: "무체강 동물로 몸이 납작합니다." },
-                                            { name: "연체동물문", emoji: "🐚", color: "#c9d3d0", features: ["외투막"], desc: "외투막을 가지며 대부분 껍데기가 있습니다." },
-                                            { name: "환형동물문", emoji: "🪱", color: "#f47960", features: ["체절"], desc: "몸에 마디(체절)가 있는 동물입니다." }
+                                            { name: "편형동물문", emoji: "🐛", color: "#38ee9d", features: ["무체강"] },
+                                            { name: "연체동물문", emoji: "🐚", color: "#c9d3d0", features: ["외투막"] },
+                                            { name: "환형동물문", emoji: "🪱", color: "#f47960", features: ["체절"] }
                                         ]
                                     },
                                     { 
                                         name: "탈피동물", color: "#fc0202",
                                         children: [
-                                            { name: "선형동물문", emoji: "🪱", color: "#f47960", features: ["탈피"], desc: "선형의 몸을 가지며 탈피를 합니다." },
-                                            { name: "절지동물문", emoji: "🦀", color: "#f537d9", features: ["외골격"], desc: "곤충, 게 등 외골격을 가진 동물입니다." }
+                                            { name: "선형동물문", emoji: "🪱", color: "#f47960", features: ["탈피"] },
+                                            { name: "절지동물문", emoji: "🦀", color: "#f537d9", features: ["외골격"] }
                                         ]
                                     }
                                 ]
@@ -128,8 +201,8 @@
                             { 
                                 name: "후구동물", color: "#8224e3",
                                 children: [
-                                    { name: "극피동물문", emoji: "⭐", color: "#fcfc02", features: ["수관계"], desc: "불가사리, 성게 등 가시 피부 동물입니다." }, 
-                                    { name: "척삭동물문", emoji: "🐟", color: "#02fcef", features: ["척삭"], desc: "사람을 포함한 등뼈가 있는 동물군입니다." }
+                                    { name: "극피동물문", emoji: "⭐", color: "#fcfc02", features: ["수관계"] }, 
+                                    { name: "척삭동물문", emoji: "🐟", color: "#02fcef", features: ["척삭"] }
                                 ]
                             }
                         ]}
@@ -138,134 +211,100 @@
             }
         };
 
-        // --- D3.js 계통수 시각화 로직 (V21 수리완료) ---
-        const width = window.innerWidth;
-        const height = window.innerHeight;
         let svg, g, zoomObj, currentLevel = 'full';
-
         window.onload = function() {
-            // SVG 생성
-            svg = d3.select("#tree-canvas")
-                .append("svg")
-                .attr("width", width)
-                .attr("height", height);
-
-            // 줌/팬 기능 정의
+            svg = d3.select("#tree-canvas").append("svg").attr("width", "100%").attr("height", "100%");
             g = svg.append("g");
-            zoomObj = d3.zoom()
-                .scaleExtent([0.1, 4]) // 확/축 범위
-                .on("zoom", (event) => g.attr("transform", event.transform));
+            zoomObj = d3.zoom().scaleExtent([0.1, 4]).on("zoom", (e) => g.attr("transform", e.transform));
             svg.call(zoomObj);
-
             renderTree('full');
-            window.addEventListener('resize', handleResize);
+            window.addEventListener('resize', () => renderTree(currentLevel));
         };
 
         window.renderTree = function(level) {
             currentLevel = level;
-            g.selectAll("*").remove(); // 기존 요소 제거
-            
-            const data = (level === 'full') ? treeData : detailsPanelsData[level];
+            g.selectAll("*").remove();
+            const data = treeData[level];
+            const isMobile = window.innerWidth < 768;
+            document.getElementById('global-back-btn').style.display = (level === 'full') ? 'none' : 'block';
             const root = d3.hierarchy(data);
-            const isMobile = width < 768;
-
-            // 트리 레이아웃 설정 (Fit to screen)
-            const treeLayout = d3.tree()
-                .size([height - 250, width - 450]); 
+            const treeLayout = d3.tree();
+            
+            // ★ 수리: 세로 가용 범위를 INNERHEIGHT - 400으로 줄여서 하단에 글씨 여유 공간을 더 확보했습니다! ★
+            if(isMobile) { treeLayout.nodeSize([110, 180]); } 
+            else { treeLayout.size([window.innerHeight - 400, window.innerWidth - 500]); }
+            
             treeLayout(root);
 
-            // 가지(Link) 그리기 (부드러운 곡선 나무 형태)
-            g.selectAll(".link")
-                .data(root.links())
-                .enter().append("path")
-                .attr("class", "link")
-                .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+            const linkGen = isMobile ? d3.linkVertical().x(d => d.x).y(d => d.y) : d3.linkHorizontal().x(d => d.y).y(d => d.x);
+            g.selectAll(".link").data(root.links()).enter().append("path").attr("class", "link").attr("d", linkGen);
 
-            // 노드(Node) 컨테이너 생성
-            const node = g.selectAll(".node")
-                .data(root.descendants())
-                .enter().append("g")
-                .attr("class", "node")
-                .attr("transform", d => `translate(${d.y},${d.x})`);
+            const node = g.selectAll(".node").data(root.descendants()).enter().append("g")
+                .attr("class", "node").attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`)
+                .on("click", (e, d) => showPopup(d.data));
 
-            // 노드 원형 그리기 (색상 적용)
-            node.append("circle")
-                .attr("r", d => d.children ? (isMobile ? 7 : 9) : (isMobile ? 5 : 7)) // 크기 차이
-                .style("stroke", d => d.data.color || "#fff");
-
-            // 클릭 이벤트: 식물계/동물계는 하위 트리로 이동, 잎 노드는 팝업
-            node.on("click", (event, d) => {
-                if (d.data.id && d.data.id !== 'full') {
-                    renderTree(d.data.id);
-                } else if (!d.children) {
-                    showPopup(d.data);
-                }
-            });
-
-            // 노드 이름 추가 (dy 오프셋 수리 완료!)
-            node.append("text")
-                .attr("dy", d => {
-                    // ★ 수리: dy 오프셋을 1.7em -> 1.2em으로 줄여 폰트 잘림 방지! ★
-                    if(!d.children) return isMobile ? "0.3em" : "0.35em"; // 잎 노드는 중앙 정렬
-                    return isMobile ? "-1.5em" : "-1.6em"; // 내부 노드는 노드 위에 배치
+            node.append("circle").attr("r", 45).attr("class", "node-hitbox");
+            node.append("circle").attr("r", isMobile ? 7 : 9).style("fill", d => d.data.color || "#475569").style("stroke", "#fff");
+            
+            node.append("text").attr("class", "node-label")
+                .attr("dy", (d) => {
+                    // ★ 수리: PC 모드에서 dy를 0.31em으로 살짝 올려서 글자 아랫부분 잘림을 방지했습니다! ★
+                    if(!isMobile) return d.children ? "-1.8em" : "0.31em";
+                    if(d.children) return "-2.2em";
+                    const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
+                    // 모바일 dy도 살짝 당겨서 안전하게 배치!
+                    return (siblingIdx % 2 === 0) ? "2.8em" : "3.1em"; 
                 })
-                .attr("x", d => d.children ? -15 : 15) // 노드 원형 옆으로 이동
-                .style("text-anchor", d => d.children ? "end" : "start") // 정렬 기준
-                .text(d => d.data.name);
+                .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30))
+                .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
+                .text(d => (d.data.emoji || "") + " " + d.data.name);
 
-            // 잎 노드(6계/문 수준)에 주요 특징 바로 표시 (V21 수리완료!)
-            node.filter(d => d.data.features && d.data.features.length > 0).append("text")
-                .attr("class", "feature-text")
-                // ★ 수리: dy 오프셋을 3.0em -> 2.4em으로 줄여 폰트 잘림 방지! ★
-                .attr("dy", d => isMobile ? "3.2em" : "2.4em") // 이름 텍스트 아래에 배치
-                .attr("x", 15)
-                .style("text-anchor", "start")
-                .text(d => "# " + d.data.features[0]); // 첫 번째 특징만 표시
+            node.filter(d => d.data.key).append("text").attr("class", "key-label")
+                .attr("dy", (d) => {
+                    if(!isMobile) return "3.5em";
+                    const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
+                    return (siblingIdx % 2 !== 0) ? "6.2em" : "4.2em";
+                })
+                .attr("x", 0).style("text-anchor", "middle").text(d => d.data.key);
 
-            // 초기 화면 중앙 배치 및 전체 보기 (Fit to Screen)
             const bounds = g.node().getBBox();
             const parentRect = svg.node().getBoundingClientRect();
-            const scale = 0.75 / Math.max(bounds.width / parentRect.width, bounds.height / parentRect.height);
-            const midX = bounds.x + bounds.width / 2;
-            const midY = bounds.y + bounds.height / 2;
-            svg.transition().duration(700).call(zoomObj.transform, d3.zoomIdentity.translate(parentRect.width / 2 - scale * midX, parentRect.height / 2 - scale * midY).scale(scale));
+            // ★ 수리: 전체 스케일을 0.6으로 낮춰서 화면 끝에 걸린 글씨들도 안전하게 안으로 들어오게 했습니다! ★
+            const scale = 0.6 / Math.max(bounds.width / parentRect.width, bounds.height / parentRect.height);
+            const midX = bounds.x + bounds.width / 2, midY = bounds.y + bounds.height / 2;
+            svg.transition().duration(700).call(zoomObj.transform, d3.zoomIdentity.translate(parentRect.width/2 - scale*midX, parentRect.height/2 - scale*midY).scale(scale));
         };
 
-        // --- 상세 정보 패널 제어 로직 ---
         function showPopup(data) {
-            if (!data.desc && !data.id && (!data.features || data.features.length === 0)) return; 
-            const panel = document.getElementById('details-panel');
-            const content = document.getElementById('details-content');
+            if(!data.desc && !data.id && !data.features) return; 
+            const popup = document.getElementById('info-popup');
+            document.getElementById('p-title').innerText = (data.emoji || "") + " " + data.name;
+            document.getElementById('p-desc').innerText = data.desc || "상세 정보가 아직 없습니다.";
+            document.getElementById('p-img').src = data.img || "https://via.placeholder.com/400x300/1e293b/ffffff?text=BioLogue";
             
-            // 기존 Tree Information 내용을 덮어씁니다.
-            content.innerHTML = `
-                <h4 class="text-xs md:text-sm lg:text-base font-black text-blue-400 mb-3 lg:mb-5 uppercase tracking-widest">Detail Information</h4>
-                <h2 class="text-xl md:text-2xl font-black text-white flex items-center gap-3 mb-4">
-                    <span class="text-3xl">${data.emoji || '🧬'}</span> ${data.name}
-                </h2>
-                <p class="text-[13px] md:text-base lg:text-lg text-slate-200 leading-relaxed font-medium mb-5">
-                    ${data.desc || "상세 분류 특징을 확인해 보세요."}
-                </p>
-                <div class="space-y-2 mb-6">
-                    ${(data.features || []).map(f => `<p class="flex items-start gap-2 text-slate-300 text-[12px] md:text-sm lg:text-base"><span class="text-blue-500 mt-1">✔</span>${f}</p>`).join('')}
-                </div>
-                <div class="mt-4 p-4 bg-white/5 rounded-2xl text-center text-xs text-slate-500 border border-white/5 shadow-inner">
-                    실제 이미지 URL로 보강 예정
-                </div>
-            `;
-            // 패널이 보이도록 hidden 클래스 제거
-            panel.classList.remove('hidden');
-        }
+            const tagsArea = document.getElementById('p-tags');
+            if (data.features && data.features.length > 0) {
+                tagsArea.innerHTML = data.features.map(f => `<span class="bg-blue-500/30 px-2 py-0.5 rounded-full text-[10px] text-blue-100 border border-blue-400/30 font-bold">#${f}</span>`).join('');
+            } else { tagsArea.innerHTML = ''; }
 
-        function closeDetails() {
-            // 패널이 숨겨지도록 hidden 클래스 추가
-            document.getElementById('details-panel').classList.add('hidden');
+            const btnArea = document.getElementById('p-btn-area');
+            const btn = document.getElementById('p-btn');
+            btnArea.classList.toggle('hidden', !data.id);
+            btn.onclick = (e) => { e.stopPropagation(); closePopup(); renderTree(data.id); };
+            popup.classList.add('popup-active');
         }
+        window.closePopup = () => document.getElementById('info-popup').classList.remove('popup-active');
 
-        function handleResize() {
-            // 창 크기 조절 시 대응 (필요시 구현)
-            renderTree(currentLevel);
-        }
+        window.openContact = function(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); }
+            document.getElementById('contact-popup').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            return false;
+        };
+        window.closeContact = function() {
+            document.getElementById('contact-popup').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
     </script>
 </body>
 </html>
