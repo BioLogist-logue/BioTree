@@ -348,8 +348,10 @@
 
             // 하위 탐험 버튼 표시 제어
             const btnArea = document.getElementById('p-btn-area');
-            const btn = document.getElementById('p-btn');
-            btnArea.classList.toggle('hidden', !data.id);
+const btn = document.getElementById('p-btn');
+	   // id가 'plantae'나 'animalia'인 경우에만 버튼을 활성화
+const isExplorable = (data.id === 'plantae' || data.id === 'animalia');
+btnArea.classList.toggle('hidden', !isExplorable);
             btn.onclick = (e) => { e.stopPropagation(); closePopup(); renderTree(data.id); };
             popup.classList.add('popup-active');
         }
