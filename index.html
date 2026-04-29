@@ -8,24 +8,23 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* 폰트 및 기본 화면 설정 */
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         body, html { margin:0; padding:0; width:100%; height:100%; background-color:#020617; color:#ffffff; font-family:'Pretendard', sans-serif; overflow:hidden; touch-action: none; }
+        
+        /* 계통수 캔버스 및 선(Link) 스타일 */
         #tree-canvas { width: 100vw; height: 100vh; }
         .link { fill: none; stroke: #475569; stroke-width: 2.5px; stroke-opacity: 0.4; transition: all 0.5s ease; }
-        .extra-link { stroke: #3b82f6; stroke-dasharray: 4,4; stroke-opacity: 0.6; } /* 추가된 연결선 스타일 */
+        .extra-link { stroke: #3b82f6; stroke-dasharray: 4,4; stroke-opacity: 0.6; } /* 수동 추가 연결선 */
         
+        /* 노드 글자 테두리 처리 (가독성용) */
         .node-label { 
-            font-size: 14px; 
-            font-weight: 900; 
-            fill: #ffffff !important; 
-            paint-order: stroke; 
-            stroke: #000000; 
-            stroke-width: 4px; 
-            stroke-linejoin: round; 
-            pointer-events: none; 
+            font-size: 14px; font-weight: 900; fill: #ffffff !important; 
+            paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; 
         }
         @media (max-width: 768px) { .node-label { font-size: 11px; } }
         
+        /* 노드 호버 및 UI 요소 스타일 */
         .key-label { font-size: 10px; fill: #94a3b8 !important; font-weight: 800; stroke: #000000; stroke-width: 3px; pointer-events: none; }
         .node { cursor: pointer; }
         .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
@@ -34,6 +33,7 @@
         .social-btn:hover { transform: translateX(8px); }
         .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
         
+        /* 스크롤바 및 팝업 애니메이션 */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -122,6 +122,11 @@
     </div>
 
     <script>
+        /**
+         * [ 계통수 데이터 섹션 ]
+         * name: 분류군 이름, color: 노드 색상, features: 태그, desc: 설명, img: 이미지 주소
+         * children: 하위 분류 노드 리스트
+         */
         const treeData = {
             full: {
                 name: "LIFE", color: "#ffffff",
@@ -141,13 +146,13 @@
                                 name: "진핵생물역", emoji: "🌿", color: "#1b2082", 
                                 children: [
                                     { 
-                                        name: "　", // ★ 원생생물계의 줄기를 길게 하기 위한 레이어 추가 ★
+                                        name: "　", // 원생생물계 줄기 길이를 위한 가상 레이어
                                         children: [
-                                            { id: "target-protista", name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["짚신벌레", "미역", "다시마"], desc: "진핵생물역 중 균계, 식물계, 동물계를 제외한 나머지 생물들의 무리이다. 대부분 단세포생물이지만 군체를 이루는 것도 있으며, 미역이나 파래처럼 다세포 생물인 것도 있다. 종속영양생물, 독립영양생물 혼합영양생물이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Algae_Algonquin.jpg" }
+                                            {name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["짚신벌레", "미역", "다시마"], desc: "진핵생물역 중 균계, 식물계, 동물계를 제외한 나머지 생물들의 무리이다. 대부분 단세포생물이지만 군체를 이루는 것도 있으며, 미역이나 파래처럼 다세포 생물인 것도 있다. 종속영양생물, 독립영양생물 혼합영양생물이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Algae_Algonquin.jpg" }
                                         ]
                                     },
                                     { 
-                                        id: "plant-ancestor", name: "공통조상", color: "#475569", // ★ 연결의 시작점이 될 노드 아이디 ★
+                                        id: "plant-ancestor", name: "공통조상", color: "#475569", // 수동 연결을 위한 ID 부여
                                         children: [ 
                                             { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양", "셀룰로스", "광합성"], desc: "다세포생물이며 셀룰로스 성분의 세포벽이 있다. 뿌리, 줄기, 잎이 발달하였고 육상 생활에 적응한 형태이다. 광합성을 하는 독립영양생물이다.", img: "https://toptropicals.com/pics/telegram/2026/2/valentines-plants-from-around-the-world-that-symbolize-love-connection-and-appreciation-1.jpg" }
                                         ]
@@ -169,19 +174,19 @@
                 name: "식물계", color: "#22c55e",
                 children: [
                     { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["솔이끼"], img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdLXvvqQK6KljH87MFNCx2AVEkLQJpOJgVag&s" },
-                    { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"] }, 
-                    { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"] },
+                    { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"], img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2BPdiV3oQRjIw12sLhVmyazwtAKOOdsPX6g&s" }, 
+                    { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"], img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRb-6ACRhhyOLgzPDinGxzPXF75na-QLY_ekg&s" },
                     { name: "관다발 식물", color: "#276e1a", children: [
-                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "쇠뜨기"] },
-                        { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송"] },
+                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "쇠뜨기"], img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJ9YtTK2uj75TV0d7_bqxwhKiwWaOG6_uYA&s" },
+                        { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송"], img: "https://www.picturethisai.com/image-handle/website_cmsname/image/1080/153897036263981077.jpeg?x-oss-process=image/format,webp/resize,s_300&v=1.0" },
                         { name: "종자 식물", color: "#92d113", children: [
                             { name: "나자식물", color: "#007534", children: [
-                                { name: "은행식물문", emoji: "🍁", color: "#e9e910", features: ["은행나무"] },
-                                { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["소철"] },
-                                { name: "구과식물문", emoji: "🌴", color: "#c17c14", features: ["구상나무"] },
-                                { name: "마황식물문", emoji: "🌳", color: "#ecc117", features: ["마황"] }
+                                { name: "은행식물문", emoji: "🍁", color: "#e9e910", features: ["은행나무"], img: "https://images.pexels.com/photos/29819857/pexels-photo-29819857/free-photo-of-golden-ginkgo-leaves-in-japanese-autumn.jpeg" },
+                                { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["소철"], img: "https://live.staticflickr.com/216/466154979_414e694bb0_b.jpg" },
+                                { name: "구과식물문", emoji: "🌴", color: "#c17c14", features: ["구상나무"], img: "https://live.staticflickr.com/883/42882786211_4181b3d540_b.jpg" },
+                                { name: "마황식물문", emoji: "🌳", color: "#ecc117", features: ["마황"], img: "https://upload.wikimedia.org/wikipedia/commons/0/06/Green_ephedra_Ephedra_viridis_close.jpg" }
                             ]},
-                            { name: "속씨식물", key: "씨방O", emoji: "🌻", color: "#f472b6", features: ["꽃", "외떡잎식물", "쌍떡잎식물"] }
+                            { name: "속씨식물", key: "씨방O", emoji: "🌻", color: "#f472b6", features: ["꽃", "외떡잎식물", "쌍떡잎식물"], img: "https://upload.wikimedia.org/wikipedia/commons/8/81/Korean_Flowers_%28177226061%29.jpeg" }
                         ]}
                     ]}
                 ]
@@ -189,9 +194,9 @@
             animalia: {
                 name: "동물계", color: "#f59e0b",
                 children: [
-                    { name: "해면동물", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽", "환상테타니해면"], desc: "몸에 대칭성이 없고 배엽도 형성하지 않아 진정한 의미의 조직이 발달하지 않은 가장 원시적인 동물이다. 대부분 바다에 서식하며, 깃세포가 편모를 움직여 물의 흐름을 만들고 물속에 있는 먹이를 걸러 잡은 뒤 세포 속으로 넣어 소화한다. 유생 시기에는 유영 생활을 하지만, 성체 시기에는 고착 생활을 한다." },
+                    { name: "해면동물", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽", "환상테타니해면"], desc: "몸에 대칭성이 없고 배엽도 형성하지 않아 진정한 의미의 조직이 발달하지 않은 가장 원시적인 동물이다. 대부분 바다에 서식하며, 깃세포가 편모를 움직여 물의 흐름을 만들고 물속에 있는 먹이를 걸러 잡은 뒤 세포 속으로 넣어 소화한다. 유생 시기에는 유영 생활을 하지만, 성체 시기에는 고착 생활을 한다.", img: "https://live.staticflickr.com/4388/36638777932_f62443cc46_b.jpg" },
                     { name: "진생동물", color: "#e85e5e", children: [
-                        { name: "자포동물", key: "2배엽", emoji: "🪼", color: "#5e65e8", features: ["방사대칭", "꽃모자해파리", "부채뿔산호", "담황줄말미잘"], desc: "몸이 방사 대칭인 2배엽동물이다. 몸 안쪽에 있는 속이 빈 구조인 강장에서 먹이를 소화하고 흡수하며, 강장의 입구가 입과 항문의 역할을 한다. 입 주변의 자세포와 촉수로 먹이를 잡는다. 유영 생활을 하는 해파리, 고착 생활을 하는 말미잘과 히드라, 석회질 골격을 형성하는 산호 등이 있다." },
+                        { name: "자포동물", key: "2배엽", emoji: "🪼", color: "#5e65e8", features: ["방사대칭", "꽃모자해파리", "부채뿔산호", "담황줄말미잘"], desc: "몸이 방사 대칭인 2배엽동물이다. 몸 안쪽에 있는 속이 빈 구조인 강장에서 먹이를 소화하고 흡수하며, 강장의 입구가 입과 항문의 역할을 한다. 입 주변의 자세포와 촉수로 먹이를 잡는다. 유영 생활을 하는 해파리, 고착 생활을 하는 말미잘과 히드라, 석회질 골격을 형성하는 산호 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Jelly_cc11.jpg" },
                         { name: "3배엽 형성", children: [
                             { 
                                 name: "선구동물", color: "#8224e3",
@@ -199,16 +204,16 @@
                                     {
                                         name: "촉수관/담륜자", color: "#fc0202",
                                         children: [
-                                            { name: "편형동물문", emoji: "🐛", color: "#38ee9d", features: ["납작한 몸", "페르시안카펫납작벌레", "플라나리아"], desc: "몸이 납작하고 좌우 대칭인 3배엽동물이다. 소화관 입구는 원구가 발달한 것으로, 항문은 없다. 피부로 기체 교환을 하며, 물속에 서식한다. 대부분 디스토마, 촌충과 같이 기생 생활을 하며, 플라나리아와 같이 자유 생활을 하는 것도 있다." },
-                                            { name: "연체동물문", emoji: "🐌", color: "#c9d3d0", features: ["체절X", "잔뿔소라", "군부", "파라오갑오징어"], desc: "몸에 체절이 없고 좌우 대칭인 3배엽동물이다. 석회질의 껍데기인 패각이 있는 경우가 많고, 패각을 분비하는 부드러운 외투막으로 덮여 있다. 순환계와 소화계가 발달하였으며 아가미로 기체 교환을 하지만 육상 생활을 하는 달팽이 등은 폐호흡을 한다. 홍합, 오징어, 문어 등이 있다." },
-                                            { name: "환형동물문", emoji: "🪱", color: "#f47960", features: ["체절", "꽃갯지렁이", "거머리"], desc: "몸에 고리 모양의 체절이 있으며 원통형이고 좌우 대칭인 3배엽동물이다. 긴 소화관과 폐쇄혈관계가 발달하였으며, 아가미 또는 피부로 호흡을 하기 때문에 주로 민물이나 습기가 많은 흙 속에 서식한다. 지렁이, 거머리 등이 있다." }
+                                            { name: "편형동물문", emoji: "🐛", color: "#38ee9d", features: ["납작한 몸", "페르시안카펫납작벌레", "플라나리아"], desc: "몸이 납작하고 좌우 대칭인 3배엽동물이다. 소화관 입구는 원구가 발달한 것으로, 항문은 없다. 피부로 기체 교환을 하며, 물속에 서식한다. 대부분 디스토마, 촌충과 같이 기생 생활을 하며, 플라나리아와 같이 자유 생활을 하는 것도 있다.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8kM2gvzhG7MsahsJPyCYj-7pRwrJ3WvrmSw&s" },
+                                            { name: "연체동물문", emoji: "🐌", color: "#c9d3d0", features: ["체절X", "잔뿔소라", "군부", "파라오갑오징어"], desc: "몸에 체절이 없고 좌우 대칭인 3배엽동물이다. 석회질의 껍데기인 패각이 있는 경우가 많고, 패각을 분비하는 부드러운 외투막으로 덮여 있다. 순환계와 소화계가 발달하였으며 아가미로 기체 교환을 하지만 육상 생활을 하는 달팽이 등은 폐호흡을 한다. 홍합, 오징어, 문어 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Helicinae_representatives_%28cropped%29.jpg" },
+                                            { name: "환형동물문", emoji: "🪱", color: "#f47960", features: ["체절", "꽃갯지렁이", "거머리"], desc: "몸에 고리 모양의 체절이 있으며 원통형이고 좌우 대칭인 3배엽동물이다. 긴 소화관과 폐쇄혈관계가 발달하였으며, 아가미 또는 피부로 호흡을 하기 때문에 주로 민물이나 습기가 많은 흙 속에 서식한다. 지렁이, 거머리 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/46/Eisenia_foetida_R.H._%288%29.JPG" }
                                         ]
                                     },
                                     { 
                                         name: "탈피동물", color: "#fc0202",
                                         children: [
-                                            { name: "선형동물문", emoji: "🪱", color: "#f47960", features: ["탈피", "체절X", "예쁜꼬마선충"], desc: "몸에 체절이 없으며 몸의 모양은 말단부로 갈수록 점점 가늘어지는 긴 원통형이고 좌우 대칭인 3배엽동물이다. 체표면이 큐티클층으로 덮여 있어 주기적으로 탈피를 하며 성장한다. 식물이나 동물에 기생하는 것도 있고, 토양과 수생 서식지에서 자유 생활을 하는 것도 있다. 예쁜꼬마선충, 선충, 회충, 요충 등이 있다." },
-                                            { name: "절지동물문", emoji: "🦀", color: "#f537d9", features: ["외골격", "체절", "따개비", "잠자리", "여치"], desc: "몸에 체절이 있으며 다리에 관절이 있고 좌우 대칭인 3배엽동물이다. 체표면이 키틴질의 외골격으로 덮여 있어 탈피를 하며 성장한다. 개방혈관계를 갖고 있으며, 아가미 또는 숨관을 통해 기체 교환을 한다. 종이 매우 다양하여 알려진 동물 종의 대부분을 차지한다. 나비, 파리, 벌, 개미, 메뚜기, 거미, 전갈, 새우, 게, 가재, 지네, 노래기 등이 있다." }
+                                            { name: "선형동물문", emoji: "🪱", color: "#f47960", features: ["탈피", "체절X", "예쁜꼬마선충"], desc: "몸에 체절이 없으며 몸의 모양은 말단부로 갈수록 점점 가늘어지는 긴 원통형이고 좌우 대칭인 3배엽동물이다. 체표면이 큐티클층으로 덮여 있어 주기적으로 탈피를 하며 성장한다. 식물이나 동물에 기생하는 것도 있고, 토양과 수생 서식지에서 자유 생활을 하는 것도 있다. 예쁜꼬마선충, 선충, 회충, 요충 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/45/C_elegans_DIC_s.jpg" },
+                                            { name: "절지동물문", emoji: "🦀", color: "#f537d9", features: ["외골격", "체절", "따개비", "잠자리", "여치"], desc: "몸에 체절이 있으며 다리에 관절이 있고 좌우 대칭인 3배엽동물이다. 체표면이 키틴질의 외골격으로 덮여 있어 탈피를 하며 성장한다. 개방혈관계를 갖고 있으며, 아가미 또는 숨관을 통해 기체 교환을 한다. 종이 매우 다양하여 알려진 동물 종의 대부분을 차지한다. 나비, 파리, 벌, 개미, 메뚜기, 거미, 전갈, 새우, 게, 가재, 지네, 노래기 등이 있다.", img: "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3drOTk0ODAyODYtd2lraW1lZGlhLWltYWdlLWtwNml2NTgwLWtwNmo1OHdxLmpwZw.jpg" }
                                         ]
                                     }
                                 ]
@@ -216,8 +221,8 @@
                             { 
                                 name: "후구동물", color: "#8224e3",
                                 children: [
-                                    { name: "극피동물문", emoji: "⭐", color: "#fcfc02", features: ["수관계", "해삼", "불가사리", "성게"], desc: "유생 시기의 몸은 좌우 대칭이지만 성체 시기의 몸은 방사 대칭인 3배엽동물이다. 체표면에 내골격과 작은 돌기가 있다. 수관계로 호흡과 순환이 이루어지며 수관계 끝에 돌출되어 있는 관족으로 운동과 감각 수용을 한다. 바다에 서식하며 천천히 움직이거나 고착 생활을 한다. 불가사리, 성게, 해삼 등이 있다." }, 
-                                    { name: "척삭동물문", emoji: "🐟", color: "#02fcef", features: ["척삭", "체절", "오목눈이", "악어", "대왕판다"], desc: "몸에 체절이 있으며 발생 과정 중 또는 일생 동안 척삭이 나타나고 좌우 대칭인 3배엽동물이다. 척삭 외에도 항문 뒤쪽의 꼬리, 등쪽의 속이 빈 신경 다발, 소화관에서 입 다음 부분인 인두로 열리는 틈새가 공통적인 형질이다. 우렁쉥이, 창고기 등이 있다. 척삭동물문의 대부분을 차지하는 척추동물은 발생 과정 초기에 척삭이 나타나지만 성체로 성장하면서 척삭은 퇴화하고 척추로 대치된다. 척추동물에는 상어, 개구리, 뱀, 비둘기, 코끼리 등이 있다." }
+                                    { name: "극피동물문", emoji: "⭐", color: "#fcfc02", features: ["수관계", "해삼", "불가사리", "성게"], desc: "유생 시기의 몸은 좌우 대칭이지만 성체 시기의 몸은 방사 대칭인 3배엽동물이다. 체표면에 내골격과 작은 돌기가 있다. 수관계로 호흡과 순환이 이루어지며 수관계 끝에 돌출되어 있는 관족으로 운동과 감각 수용을 한다. 바다에 서식하며 천천히 움직이거나 고착 생활을 한다. 불가사리, 성게, 해삼 등이 있다.", img: "https://www.publicdomainpictures.net/pictures/180000/nahled/starfish-14641066626Au.jpg" }, 
+                                    { name: "척삭동물문", emoji: "🐟", color: "#02fcef", features: ["척삭", "체절", "오목눈이", "악어", "대왕판다"], desc: "몸에 체절이 있으며 발생 과정 중 또는 일생 동안 척삭이 나타나고 좌우 대칭인 3배엽동물이다. 척삭 외에도 항문 뒤쪽의 꼬리, 등쪽의 속이 빈 신경 다발, 소화관에서 입 다음 부분인 인두로 열리는 틈새가 공통적인 형질이다. 우렁쉥이, 창고기 등이 있다. 척삭동물문의 대부분을 차지하는 척추동물은 발생 과정 초기에 척삭이 나타나지만 성체로 성장하면서 척삭은 퇴화하고 척추로 대치된다. 척추동물에는 상어, 개구리, 뱀, 비둘기, 코끼리 등이 있다.", img: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/010a163a-59d0-4bf9-9a56-00a6b6c0a0b9/d6094yj-04911599-84b1-4211-bba0-5a0b1772a072.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8wMTBhMTYzYS01OWQwLTRiZjktOWE1Ni0wMGE2YjZjMGEwYjkvZDYwOTR5ai0wNDkxMTU5OS04NGIxLTQyMTEtYmJhMC01YTBiMTc3MmEwNzIuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.wAuoc2W96Y84SPqsoMTqSFwIB7g-pzacqp1gxgjnd-I" }
                                 ]
                             }
                         ]}
@@ -226,36 +231,49 @@
             }
         };
 
+        /* SVG 캔버스 설정 전역 변수 */
         let svg, g, zoomObj, currentLevel = 'full';
+
+        /**
+         * [ 화면 초기화 ] 페이지 로드 시 SVG 영역을 생성하고 초기 계통수를 그림
+         */
         window.onload = function() {
             svg = d3.select("#tree-canvas").append("svg").attr("width", "100%").attr("height", "100%");
             g = svg.append("g");
+            // 줌(확대/축소) 기능 설정
             zoomObj = d3.zoom().scaleExtent([0.1, 4]).on("zoom", (e) => g.attr("transform", e.transform));
             svg.call(zoomObj);
-            renderTree('full');
-            window.addEventListener('resize', () => renderTree(currentLevel));
+            renderTree('full'); // 초기 렌더링
+            window.addEventListener('resize', () => renderTree(currentLevel)); // 리사이즈 시 재정렬
         };
 
+        /**
+         * [ 계통수 렌더링 함수 ]
+         */
         window.renderTree = function(level) {
             currentLevel = level;
-            g.selectAll("*").remove();
+            g.selectAll("*").remove(); // 이전 노드들 제거
+            
             const data = treeData[level];
             const isMobile = window.innerWidth < 768;
+            
+            // 뒤로가기 버튼 노출 여부
             document.getElementById('global-back-btn').style.display = (level === 'full') ? 'none' : 'block';
+            
+            // D3 트리 레이아웃 설정
             const root = d3.hierarchy(data);
             const treeLayout = d3.tree();
-            
             if(isMobile) { treeLayout.nodeSize([110, 180]); } 
             else { treeLayout.size([window.innerHeight - 400, window.innerWidth - 500]); }
-            
             treeLayout(root);
 
+            // 링크 생성기 (모바일: 세로형, PC: 가로형)
             const linkGen = isMobile ? d3.linkVertical().x(d => d.x).y(d => d.y) : d3.linkHorizontal().x(d => d.y).y(d => d.x);
             
-            // 일반 링크 그리기
+            // 1. 일반 계통수 라인 그리기
             g.selectAll(".link").data(root.links()).enter().append("path").attr("class", "link").attr("d", linkGen);
 
-            // ★ 추가 미션: 식물계 조상 -> 원생생물계 연결 가지 수동 추가 ★
+            // 2. 수동 연결 (식물계 조상 -> 원생생물계 연결선)
             if(level === 'full') {
                 const protistaNode = root.descendants().find(d => d.data.id === 'target-protista');
                 const plantAncNode = root.descendants().find(d => d.data.id === 'plant-ancestor');
@@ -266,24 +284,31 @@
                 }
             }
 
+            // 3. 노드 그룹 생성 및 클릭 이벤트 바인딩
             const node = g.selectAll(".node").data(root.descendants()).enter().append("g")
                 .attr("class", "node").attr("transform", d => isMobile ? `translate(${d.x},${d.y})` : `translate(${d.y},${d.x})`)
                 .on("click", (e, d) => showPopup(d.data));
 
-            node.append("circle").attr("r", 30).attr("class", "node-hitbox");
+            // 4. 노드 강조 원 및 클릭 히트박스(크기 25 고정)
+            node.append("circle").attr("r", 25).attr("class", "node-hitbox");
             node.append("circle").attr("r", isMobile ? 7 : 9).style("fill", d => d.data.color || "#475569").style("stroke", "#fff");
             
-            node.append("text").attr("class", "node-label")
-                .attr("dy", (d) => {
-                    if(!isMobile) return d.children ? "-1.8em" : "0.31em";
-                    if(d.children) return "-2.2em";
-                    const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
-                    return (siblingIdx % 2 === 0) ? "2.8em" : "3.1em"; 
-                })
+            // 5. 노드 라벨(이름) 추가
+           node.append("text").attr("class", "node-label")
+    .attr("dy", (d) => {
+        // ★ 추가: 특정 노드 이름인 경우 글씨를 아래로(2.5em) 내립니다.
+        if (d.data.name === "진생동물" || d.data.name === "3배엽 형성") return "2.5em";
+
+        if(!isMobile) return d.children ? "-1.8em" : "0.31em";
+        if(d.children) return "-2.2em";
+        const siblingIdx = d.parent ? d.parent.children.indexOf(d) : 0;
+        return (siblingIdx % 2 === 0) ? "2.8em" : "3.1em"; 
+    })
                 .attr("x", d => isMobile ? 0 : (d.children ? 0 : 30))
                 .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
                 .text(d => (d.data.emoji || "") + " " + d.data.name);
 
+            // 6. 기준 키워드 라벨(관다발O 등) 추가
             node.filter(d => d.data.key).append("text").attr("class", "key-label")
                 .attr("dy", (d) => {
                     if(!isMobile) return "3.5em";
@@ -292,6 +317,7 @@
                 })
                 .attr("x", 0).style("text-anchor", "middle").text(d => d.data.key);
 
+            // 7. 자동 중앙 정렬 기능
             const bounds = g.node().getBBox();
             const parentRect = svg.node().getBoundingClientRect();
             const scale = 0.6 / Math.max(bounds.width / parentRect.width, bounds.height / parentRect.height);
@@ -299,32 +325,46 @@
             svg.transition().duration(700).call(zoomObj.transform, d3.zoomIdentity.translate(parentRect.width/2 - scale*midX, parentRect.height/2 - scale*midY).scale(scale));
         };
 
+        /**
+         * [ 상세 팝업 표시 함수 ]
+         */
         function showPopup(data) {
+            // [특수 처리] 식물계 바로 위 공통조상은 팝업 차단 (주인님 명령)
+            if (data.id === 'plant-ancestor') return;
+
+            // 데이터 없는 노드는 팝업 띄우지 않음
             if(!data.desc && !data.id && !data.features) return; 
+            
             const popup = document.getElementById('info-popup');
             document.getElementById('p-title').innerText = (data.emoji || "") + " " + data.name;
             document.getElementById('p-desc').innerText = data.desc || "상세 정보가 아직 없습니다.";
             document.getElementById('p-img').src = data.img || "https://via.placeholder.com/400x300/1e293b/ffffff?text=BioLogue";
             
+            // 특징 태그 HTML 생성
             const tagsArea = document.getElementById('p-tags');
             if (data.features && data.features.length > 0) {
                 tagsArea.innerHTML = data.features.map(f => `<span class="bg-blue-500/30 px-2 py-0.5 rounded-full text-[10px] text-blue-100 border border-blue-400/30 font-bold">#${f}</span>`).join('');
             } else { tagsArea.innerHTML = ''; }
 
+            // 하위 탐험 버튼 표시 제어
             const btnArea = document.getElementById('p-btn-area');
             const btn = document.getElementById('p-btn');
             btnArea.classList.toggle('hidden', !data.id);
             btn.onclick = (e) => { e.stopPropagation(); closePopup(); renderTree(data.id); };
             popup.classList.add('popup-active');
         }
+        
+        /* 팝업 닫기 기능 */
         window.closePopup = () => document.getElementById('info-popup').classList.remove('popup-active');
 
+        /* 문의하기 팝업 열기 */
         window.openContact = function(e) {
             if(e) { e.preventDefault(); e.stopPropagation(); }
             document.getElementById('contact-popup').classList.add('active');
             document.body.style.overflow = 'hidden';
             return false;
         };
+        /* 문의하기 팝업 닫기 */
         window.closeContact = function() {
             document.getElementById('contact-popup').classList.remove('active');
             document.body.style.overflow = 'auto';
