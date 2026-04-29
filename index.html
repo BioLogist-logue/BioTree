@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BioLogue - 생물 분류체계🌿 (V24)</title>
+    <title>Biologue - 생물 분류체계🌿 (1.0)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -128,14 +128,14 @@
                 children: [
                     { 
                         name: "진정세균역", emoji: "🧫", color: "#9a1818", 
-                        children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸○", "원형DNA"], desc: "단세포 원핵생물로 주로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 있다. 대부분 종속영양생물이지만 남세균처럼 광합성을 하는 독립영양생물도 있다. 대부분의 세균은 세균역에 속한다.", img: "https://images.unsplash.com/photo-1583912267550-d44d7a125e7e?auto=format&fit=crop&q=80&w=400" }] 
+                        children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸○", "원형DNA"], desc: "단세포 원핵생물로 주로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 있다. 대부분 종속영양생물이지만 남세균처럼 광합성을 하는 독립영양생물도 있다. 대부분의 세균은 세균역에 속한다.", img: "https://i.shgcdn.com/4ee17b6f-b548-4ba6-99dc-56bd7bb4b7e5/-/format/auto/-/preview/3000x3000/-/quality/lighter/" }] 
                     },
                     { 
                         name: "공통조상", color: "#475569", 
                         children: [
                             { 
                                 name: "고세균역", emoji: "🌋", color: "#751f79",
-                                children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", features: ["극한환경", "원형 DNA", "펩티도글리칸X" ], desc: "단세포 원핵생물로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 없다. 라이보솜의 크기는 세균역 생물의 것과 유사하고, DNA에 비암호화 부위가 있다는 점은 진핵생물역 생물과 유사하다. 대부분 고농도의 소금 호수, 고온의 온천과 같이 극한의 환경에서 살고 있다. 고균계에 속하는 생물에는 메테인 생성균, 극호염균, 극호열균 등이 있다.", img: "https://images.unsplash.com/photo-1533044309907-0fa3413da946?auto=format&fit=crop&q=80&w=400" }] 
+                                children: [{ name: "고세균계", emoji: "♨️", color: "#a855f7", features: ["극한환경", "원형 DNA", "펩티도글리칸X" ], desc: "단세포 원핵생물로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 없다. 라이보솜의 크기는 세균역 생물의 것과 유사하고, DNA에 비암호화 부위가 있다는 점은 진핵생물역 생물과 유사하다. 대부분 고농도의 소금 호수, 고온의 온천과 같이 극한의 환경에서 살고 있다. 고균계에 속하는 생물에는 메테인 생성균, 극호염균, 극호열균 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Diversity_of_Archaea.jpg" }] 
                             },
                             { 
                                 name: "진핵생물역", emoji: "🌿", color: "#1b2082", 
@@ -143,20 +143,20 @@
                                     { 
                                         name: "　", // ★ 원생생물계의 줄기를 길게 하기 위한 레이어 추가 ★
                                         children: [
-                                            { id: "target-protista", name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["짚신벌레", "미역", "다시마"], desc: "진핵생물역 중 균계, 식물계, 동물계를 제외한 나머지 생물들의 무리이다. 대부분 단세포생물이지만 군체를 이루는 것도 있으며, 미역이나 파래처럼 다세포 생물인 것도 있다. 종속영양생물, 독립영양생물 혼합영양생물이 있다." }
+                                            { id: "target-protista", name: "원생생물계", emoji: "🦠", color: "#f59e0b", features: ["짚신벌레", "미역", "다시마"], desc: "진핵생물역 중 균계, 식물계, 동물계를 제외한 나머지 생물들의 무리이다. 대부분 단세포생물이지만 군체를 이루는 것도 있으며, 미역이나 파래처럼 다세포 생물인 것도 있다. 종속영양생물, 독립영양생물 혼합영양생물이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Algae_Algonquin.jpg" }
                                         ]
                                     },
                                     { 
                                         id: "plant-ancestor", name: "공통조상", color: "#475569", // ★ 연결의 시작점이 될 노드 아이디 ★
                                         children: [ 
-                                            { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양", "셀룰로스", "광합성"], desc: "다세포생물이며 셀룰로스 성분의 세포벽이 있다. 뿌리, 줄기, 잎이 발달하였고 육상 생활에 적응한 형태이다. 광합성을 하는 독립영양생물이다." }
+                                            { name: "식물계", id: "plantae", emoji: "🌳", color: "#1aef24", features: ["독립영양", "셀룰로스", "광합성"], desc: "다세포생물이며 셀룰로스 성분의 세포벽이 있다. 뿌리, 줄기, 잎이 발달하였고 육상 생활에 적응한 형태이다. 광합성을 하는 독립영양생물이다.", img: "https://toptropicals.com/pics/telegram/2026/2/valentines-plants-from-around-the-world-that-symbolize-love-connection-and-appreciation-1.jpg" }
                                         ]
                                     },
                                     { 
                                         name: "공통조상", color: "#475569",
                                         children: [ 
-                                            { name: "균계", emoji: "🍄", color: "#1aefe4", features: ["종속영양", "효모", "버섯", "곰팡이", "키틴", "균사"], desc: "대부분 다세포생물이지만 효모처럼 단세포생물인 것도 있다. 몸이 균사로 되어 있으며, 키틴질의 세포벽이 있다. 곰팡이와 버섯을 포함하는 생물군으로, 모두 종속영양생물이다." },
-                                            { name: "동물계", id: "animalia", emoji: "🦁", color: "#eae361", features: ["종속영양", "세포벽X"], desc: "다세포생물이며 세포벽이 없고 광합성을 하지 못하는 종속영양생물이다. 조직과 기관이 발달하여 먹이를 능동적으로 섭취할 수 있다." }
+                                            { name: "균계", emoji: "🍄", color: "#1aefe4", features: ["종속영양", "효모", "버섯", "곰팡이", "키틴", "균사"], desc: "대부분 다세포생물이지만 효모처럼 단세포생물인 것도 있다. 몸이 균사로 되어 있으며, 키틴질의 세포벽이 있다. 곰팡이와 버섯을 포함하는 생물군으로, 모두 종속영양생물이다.", img: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Translucent_white_fungi.jpg" },
+                                            { name: "동물계", id: "animalia", emoji: "🦁", color: "#eae361", features: ["종속영양", "세포벽X"], desc: "다세포생물이며 세포벽이 없고 광합성을 하지 못하는 종속영양생물이다. 조직과 기관이 발달하여 먹이를 능동적으로 섭취할 수 있다.", img: "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BkMTA2LTA4MS5qcGc.jpg" }
                                         ]
                                     }
                                 ]
@@ -168,7 +168,7 @@
             plantae: {
                 name: "식물계", color: "#22c55e",
                 children: [
-                    { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["솔이끼"] },
+                    { name: "선태식물문", key: "관다발X", emoji: "🌱", color: "#cffdc8", features: ["솔이끼"], img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdLXvvqQK6KljH87MFNCx2AVEkLQJpOJgVag&s" },
                     { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"] }, 
                     { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"] },
                     { name: "관다발 식물", color: "#276e1a", children: [
