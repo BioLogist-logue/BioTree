@@ -26,7 +26,7 @@
         .tab-content.active { display: block; }
         
         /* 검색창 스타일 */
-        .search-container { position: absolute; top: 20px; right: 20px; z-index: 150; display: flex; gap: 10px; background: rgba(15,23,42,0.8); padding: 8px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .search-container { position: absolute; top: 40px; right: 20px; z-index: 150; display: flex; gap: 10px; background: rgba(15,23,42,0.8); padding: 8px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .search-input { background: rgba(0,0,0,0.5); border: 1px solid #475569; color: #fff; padding: 6px 12px; border-radius: 10px; outline: none; width: 200px; font-weight: bold; font-size: 13px; }
         .search-input:focus { border-color: #3b82f6; }
         .search-btn { background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 13px; }
@@ -115,7 +115,7 @@
                         <p class="text-xs text-slate-400 mb-6">문제은행 30문항 중 랜덤으로 10문제가 출제되며, 매판 새로운 배치가 구성됩니다.</p>
                         
                         <div id="quiz-setup" class="space-y-4 flex flex-col gap-4">
-                            <input type="text" id="player-nickname" maxlength="10" placeholder="닉네임을 입력해라 주인님!" class="w-full bg-slate-950 border border-slate-700 text-white p-4 rounded-xl font-bold text-lg outline-none focus:border-blue-500 transition-colors">
+                            <input type="text" id="player-nickname" maxlength="10" placeholder="닉네임을 입력해주세요!" class="w-full bg-slate-950 border border-slate-700 text-white p-4 rounded-xl font-bold text-lg outline-none focus:border-blue-500 transition-colors">
                             <button onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl text-lg shadow-lg transition-all border-none">게임 시작! 🔥</button>
                         </div>
                         
@@ -183,7 +183,7 @@
 
     <script>
         /**
-         * 1. Supabase 초기화 (주인님의 찐 API 키 적용 완료 & 변수명 충돌 방지)
+         * 1. Supabase 초기화 (API 키 적용 완료 & 변수명 충돌 방지)
          */
         const SUPABASE_URL = 'https://fjcddgvhsauwyqzfrmur.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqY2RkZ3Zoc2F1d3lxemZybXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5ODQwNTQsImV4cCI6MjA5NjU2MDA1NH0.KR3SiOsZl4LBI4hL4YYuPdBIXOP1C2kiwZ5uExohZZI';
@@ -498,7 +498,7 @@
 
         window.startQuiz = function() {
             playerNick = document.getElementById('player-nickname').value.trim();
-            if(!playerNick) return alert("시상대에 이름을 올릴 닉네임을 적어라 주인님!");
+            if(!playerNick) return alert("시상대에 이름을 올릴 닉네임을 적어주세요!");
             
             quizSet = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 10);
             currentQ = 0; score = 0;
