@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Biologue - 생물 분류체계🌿 (2.0 완벽통합본 - 찐최종)</title>
+    <title>biologue-생물 계통수🌿(2.0)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -40,8 +40,8 @@
         .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
         @media (max-width: 768px) { .node-label { font-size: 11px; } .sidebar { position: fixed; transform: translateX(-100%); height: 100%; } .sidebar.open { transform: translateX(0); } }
         
-        /* 🔥 띨빡이의 대각성 픽스: paint-order 추가하여 테두리가 글자를 먹는 현상 완벽 해결! */
-        .key-label { font-size: 11px; fill: #3b82f6 !important; font-weight: 900; paint-order: stroke; stroke: #000000; stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
+        /* 🔥 띨빡이의 유일한 수정 구역: paint-order 및 색상 필터를 수정하여 글자가 선명하게 보이도록 수정! */
+        .key-label { font-size: 11px; fill: #60a5fa !important; font-weight: 900; paint-order: stroke; stroke: #000000; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
         .node { cursor: pointer; }
         .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
         .node.highlighted circle { stroke: #ff4757; stroke-width: 4px; filter: drop-shadow(0 0 15px #ff4757); }
@@ -78,10 +78,25 @@
             </div>
 
             <div class="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4">
-                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">교수학습 유니버스 바로가기</p>
-                <a href="javascript:alert('준비 중인 대시보드입니다!');" class="text-xs font-bold text-slate-400 hover:text-white transition-colors">🦠 세포 구조 게임 대시보드</a>
-                <a href="http://blog.naver.com/biologue_" target="_blank" class="text-xs font-bold text-green-400 hover:text-green-300 transition-colors mt-1">📝 Science Blog - BioLogue</a>
-            </div>
+    <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">biologue_생명과학 유니버스 바로가기</p>
+    
+    <a href="https://biologist-logue.github.io/cell-game/" target="_blank" class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+        🎮 세포 추리 게임
+    </a>
+    
+    <a href="https://enzyme-3d-simulator.streamlit.app/" target="_blank" class="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 mt-1">
+        🧪 효소 3D 탐구 시뮬레이터
+    </a>
+
+    <a href="https:/_또다른_대시보드_주소.com" target="_blank" class="text-xs font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 mt-1">
+        🧬 준비중...
+    </a>
+    
+    <a href="http://blog.naver.com/biologue_" target="_blank" class="text-xs font-bold text-green-400 hover:text-green-300 transition-colors flex items-center gap-1 mt-1">
+        📝 Science Blog - bioLogue_
+    </a>
+</div>
+💡 띨빡이의 사용 설명서
         </nav>
 
         <main class="content">
@@ -112,7 +127,7 @@
                 <div class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8 min-h-[80vh]">
                     <div class="flex-1 bg-slate-900 border border-white/10 p-6 md:p-8 rounded-3xl shadow-2xl flex flex-col justify-center">
                         <h2 class="text-2xl font-black text-white mb-2 flex items-center gap-2">🎮 대도전! 생물 분류 랭킹전</h2>
-                        <p class="text-xs text-slate-400 mb-6">문제은행 30문항 중 랜덤으로 10문제가 출제되며, 매판 새로운 배치가 구성됩니다.</p>
+                        <p class="text-xs text-slate-400 mb-6">문제은행에서 랜덤으로 10문제가 출제되며, 매판 새로운 배치가 구성됩니다.</p>
                         
                         <div id="quiz-setup" class="space-y-4 flex flex-col gap-4">
                             <input type="text" id="player-nickname" maxlength="10" placeholder="닉네임을 입력해주세요!" class="w-full bg-slate-950 border border-slate-700 text-white p-4 rounded-xl font-bold text-lg outline-none focus:border-blue-500 transition-colors">
@@ -133,7 +148,7 @@
 
                         <div id="quiz-result" class="hidden text-center py-8 space-y-6 flex flex-col gap-4">
                             <h2 class="text-3xl font-black text-green-400">🎉 플레이 완료!</h2>
-                            <p class="text-xl text-slate-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
+                            <p class="text-xl text-gray-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
                             <button onclick="restartQuizSetup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl border border-white/10 transition-colors">다시 도전하기</button>
                         </div>
                     </div>
@@ -202,14 +217,14 @@
 
     <script>
         /**
-         * 1. Supabase 초기화 (안전 명칭 우회)
+         * 1. Supabase 초기화 (API 키 적용 완료 & 변수명 충돌 방지)
          */
         const SUPABASE_URL = 'https://fjcddgvhsauwyqzfrmur.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqY2RkZ3Zoc2F1d3lxemZybXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5ODQwNTQsImV4cCI6MjA5NjU2MDA1NH0.KR3SiOsZl4LBI4hL4YYuPdBIXOP1C2kiwZ5uExohZZI';
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
         /**
-         * 2. UI 제어 함수
+         * 2. UI 제어 함수 (전역 스코프로 분리하여 버튼 인식 100% 보장)
          */
         window.switchTab = function(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -231,17 +246,19 @@
             document.getElementById('info-popup').classList.remove('popup-active');
         };
         
+        // 🔥 여기가 복구된 라이브리 팝업 오픈 함수입니다! 🔥
         window.openContact = function(e) {
             e.preventDefault(); 
             document.getElementById('contact-popup').classList.add('active');
         };
 
+        // 🔥 라이브리 팝업 닫기 함수입니다! 🔥
         window.closeContact = function() {
             document.getElementById('contact-popup').classList.remove('active');
         };
 
         /**
-         * 3. 계통수 오리지널 데이터 (주인님이 예시로 추가하신 진정세균역 key 포함!)
+         * 3. 계통수 오리지널 데이터
          */
         const treeData = {
             full: {
@@ -249,7 +266,7 @@
                 children: [
                     { 
                         name: "진정세균역", emoji: "🧫", color: "#9a1818", 
-                        key: "세포벽 펩티도글리칸 유무", // 👈 주인님이 테스트하신 분류기준 데이터!
+                        key: "세포벽 펩티도글리칸 유무",
                         children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸○", "원형DNA"], desc: "단세포 원핵생물로 주로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 있다. 대부분 종속영양생물이지만 남세균처럼 광합성을 하는 독립영양생물도 있다. 대부분의 세균은 세균역에 속한다.", img: "https://i.shgcdn.com/4ee17b6f-b548-4ba6-99dc-56bd7bb4b7e5/-/format/auto/-/preview/3000x3000/-/quality/lighter/" }] 
                     },
                     { 
@@ -293,7 +310,7 @@
                     { name: "태류식물문", key: "관다발X", emoji: "🌱", color: "#8df07e", features: ["우산이끼"], desc: "선태식물류 중 엽상체나 경엽의 형태를 가지며 헛뿌리가 발달했다. 우산이끼가 대표적이다.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2BPdiV3oQRjIw12sLhVmyazwtAKOOdsPX6g&s" }, 
                     { name: "각태류식물문", key: "관다발X", emoji: "🌱", color: "#7bca3e", features: ["뿔이끼"], desc: "가늘고 긴 뿔 모양의 포자체를 형성하는 선태식물 무리이다.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRb-6ACRhhyOLgzPDinGxzPXF75na-QLY_ekg&s" },
                     { name: "관다발 식물", color: "#276e1a", children: [
-                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "쇠뜨기"], desc: "포자로 번식하며 뿌리, 줄기, 잎을 가지고 있는 유관속 식물 중에서 가장 오래되고 원시적인 식물이다. 배우자체와 포자체 세대를 번갈아 가며 살아가며, 포자체 세대가 배우자체 세대보다 장기간 광합성을 하며 독자 생존한다.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJ9YtTK2uj75TV0d7_bqxwhKiwWaOG6_uYA&s" },
+                        { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "쇠뜨기"], desc: "포자로 번식하며 뿌리, 줄기, 잎을 가지고 있는 유관속 식물 중에서 가장 오래되고 원시적인 식물이다. 배우자체와 포자체 세대를 번갈아 가며 살아가며, 포자체 세대가 배우자체 세보다 장기간 광합성을 하며 독자 생존한다.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJ9YtTK2uj75TV0d7_bqxwhKiwWaOG6_uYA&s" },
                         { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송"], desc: "관다발 식물에 속하는 식물의 문이다. 솔잎란류보다 진화된 형태이며, 몸은 뿌리, 줄기, 잎으로 분화되어 있다. 잎은 비늘 모양의 작은 잎으로 줄기에 나선 모양으로 밀생하며, 분지되지 않은 1개의 잎맥을 갖는다.", img: "https://www.picturethisai.com/image-handle/website_cmsname/image/1080/153897036263981077.jpeg" },
                         { name: "종자 식물", color: "#92d113", children: [
                             { name: "나자식물", color: "#007534", children: [
@@ -437,7 +454,6 @@
                     .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
                     .text(d => (d.data.emoji || "") + " " + d.data.name);
 
-                // 🌟 분류 기준 레이블 출력부 (PC에서는 아래로 3.5em 위치하여 가독성 업그레이드)
                 node.filter(d => d.data.key).append("text").attr("class", "key-label")
                     .attr("dy", (d) => {
                         if(!isMobile) return "3.5em";
@@ -501,21 +517,41 @@
          * 6. 문제은행 퀴즈 및 Supabase 시스템
          */
         const questionBank = [
-            { img: "https://images.unsplash.com/photo-1598449426314-8b0101c51828?w=500", text: "교과서 속 달팽이나 오징어처럼 체절이 없고 부드러운 외투막을 가진 분류군은?", answer: "연체동물문", wrong: "환형동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/4/46/Eisenia_foetida_R.H._%288%29.JPG", text: "몸에 고리 모양의 뚜렷한 체절이 있으며 폐쇄혈관계를 가진 지렁이와 거머리는 어느 문?", answer: "환형동물문", wrong: "선형동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/1200px-SpongeBob_SquarePants_character.svg.png", text: "스폰지밥의 실제 모델! 배엽을 형성하지 않는 가장 원시적인 무배엽 동물군은?", answer: "해면동물문", wrong: "자포동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/3/33/Patrick_Star.svg/1200px-Patrick_Star.svg.png", text: "귀여운 뚱이! 성체는 방사대칭이며 수관계와 관족으로 이동하는 불가사리, 성게 무리는?", answer: "극피동물문", wrong: "연체동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/Squidward_Tentacles.svg/1200px-Squidward_Tentacles.svg.png", text: "징징이는 촉수관/담륜자 무리에 속하며 두족류에 해당합니다. 어느 분류문일까요?", answer: "연체동물문", wrong: "절지동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Mr._Krabs.svg/1200px-Mr._Krabs.svg.png", text: "집게사장과 포켓몬 크랩! 키틴질 외골격을 가지며 탈피를 통해 생장하는 동물군은?", answer: "절지동물문", wrong: "환형동물문" },
-            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/025.png", text: "전기쥐 피카츄! 일생 또는 발생 과정 중 등쪽에 속이 빈 신경관과 척삭이 나타나는 문은?", answer: "척삭동물문", wrong: "절지동물문" },
-            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png", text: "파닥거리는 잉어킹! 발생 초기에 척삭이 나타났으나 자라면서 척추로 대체되는 포괄적 분류군은?", answer: "척삭동물문", wrong: "연체동물문" },
-            { img: "https://images.pexels.com/photos/29819857/pexels-photo-29819857.jpeg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "은행식물문", wrong: "구과식물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Algae_Algonquin.jpg", text: "짚신벌레, 미역, 다시마처럼 진핵생물 중 균계, 식물계, 동물계를 제외한 과도기적 생물계는?", answer: "원생생물계", wrong: "고세균계" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdLXvvqQK6KljH87MFNCx2AVEkLQJpOJgVag&s", text: "교과서에 나오는 솔이끼처럼 유관속(관다발)이 발달하지 않은 대표적인 식물군은?", answer: "선태식물문", wrong: "양치식물문" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJ9YtTK2uj75TV0d7_bqxwhKiwWaOG6_uYA&s", text: "포자로 번식하지만 뿌리, 줄기, 잎이 뚜렷하고 관다발이 발달한 고사리는 어디에 속할까?", answer: "양치식물문", wrong: "선태식물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Jelly_cc11.jpg", text: "꽃모자해파리와 담황줄말미잘처럼 방사대칭 구조를 지닌 2배엽 구조의 포식성 동물군은?", answer: "자포동물문", wrong: "편형동물문" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8kM2gvzhG7MsahsJPyCYj-7pRwrJ3WvrmSw&s", text: "플라나리아나 디스토마처럼 몸이 납작하며 소화관 입구는 있으나 항문이 없는 선구동물은?", answer: "편형동물문", wrong: "선형동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/4/45/C_elegans_DIC_s.jpg", text: "예쁜꼬마선충, 회충처럼 체절이 없으며 주기적으로 탈피하는 원통형 3배엽 생물군은?", answer: "선형동물문", wrong: "환형동물문" }
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANGScGrDBhRMfQK4jmaLDfGeJwrOPLYQ9KM_4RchHAW90UiA&s=10", text: "교과서 속 달팽이나 오징어처럼 체절이 없고 부드러운 외투막을 가진 분류군은?", answer: "연체동물문", wrong: "환형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9Odp7072hW1bJwHNzHZRqaQmc6WjouLu4S2gh3_G1aw&s=10", text: "몸에 고리 모양의 뚜렷한 체절이 있으며 폐쇄혈관계를 가진 지렁이와 거머리는 어느 문?", answer: "환형동물문", wrong: "선형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNfaQlcvg7pao5Hj_j0VJGA6uDv-_syMetbytu-7Lnmw&s=10", text: "넴모넴모 스폰지밥의 실제 모델! 배엽을 형성하지 않는 가장 원시적인 무배엽 동물군은?", answer: "해면동물문", wrong: "자포동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ9awSFzlXqWA-GYP2CH87aEes7Y9kAPaMLBawh8TCzg&s=10", text: "귀여운 뚱이! 성체는 방사대칭이며 수관계와 관족으로 이동하는 불가사리, 성게 무리는?", answer: "극피동물문", wrong: "연체동물문" },
+            { img: "https://mblogthumb-phinf.pstatic.net/MjAyMTAxMDdfMjE3/MDAxNjEwMDEyMzAzMjI2.sAWMz0e4a_3ZN6Gj1rOumFSUUWHa-uUr388r1hX7sv4g.DN5bE9vCSBb92VmyEMrGWwMfz6l8tDWxBlSMhHAhZlog.JPEG.hiyuns00/IMG_8903.JPG?type=w800", text: "징징이는 촉수관/담륜자 무리에 속하며 두족류에 해당합니다. 어느 분류문일까요?", answer: "연체동물문", wrong: "절지동물문" },
+            { img: "https://i1.sndcdn.com/artworks-oKnp6FNTn4ZhtINF-foNy2A-t500x500.jpg", text: "돈 좋아하는 집게사장! 키틴질 외골격을 가지며 탈피를 통해 생장하는 동물군은?", answer: "절지동물문", wrong: "환형동물문" },
+            { img: "https://www.animationmagazine.net/wordpress/wp-content/uploads/pokemon-detective-pikachu.jpg", text: "전기쥐 피카츄! 일생 또는 발생 과정 중 등쪽에 속이 빈 신경관과 척삭이 나타나는 문은?", answer: "척삭동물문", wrong: "절지동물문" },
+            { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/cnoC/image/013bLiTo1KqwkuI0ObMpa4rCzM4", text: "파닥거리는 잉어킹! 발생 초기에 척삭이 나타났으나 자라면서 척추로 대체되는 포괄적 분류군은?", answer: "척삭동물문", wrong: "연체동물문" },
+            { img: "https://cdn.eduplusnews.com/news/photo/202509/16269_21416_268.jpg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "은행식물문", wrong: "구과식물문" },
+            { img: "https://db.kookje.co.kr/news2000/photo/2018/0620/L20180620.22021009399i1.jpg", text: "짚신벌레, 미역, 다시마처럼 진핵생물 중 균계, 식물계, 동물계를 제외한 과도기적 생물계는?", answer: "원생생물계", wrong: "고세균계" },
+            { img: "https://d2fwaet2smbydf.cloudfront.net/species/JMr6nwXUDusNXgm1nmq.jpg", text: "교과서에 나오는 솔이끼처럼 유관속(관다발)이 발달하지 않은 대표적인 식물군은?", answer: "선태식물문", wrong: "양치식물문" },
+            { img: "https://mblogthumb-phinf.pstatic.net/MjAyMDA4MTFfMjM4/MDAxNTk3MTQ1NDQ4NDk2.T6HG7vdQe0TbhkdWqE7hDKtrZ4s9-MhuLtASt2zkhiIg.LEF6KHE4-bIwdPiiqW_fQxqGD-4S_ask3r9I-ppvx8Eg.JPEG.aaaaahi/1597145449708.jpg?type=w800", text: "포자로 번식하지만 뿌리, 줄기, 잎이 뚜렷하고 관다발이 발달한 고사리는 어디에 속할까?", answer: "양치식물문", wrong: "선태식물문" },
+            { img: "https://cdn.imweb.me/upload/S20230405aa1434cc7cb6a/8ea5be7f10dbb.jpg", text: "꽃모자해파리와 담황줄말미잘처럼 방사대칭 구조를 지닌 2배엽 구조의 포식성 동물군은?", answer: "자포동물문", wrong: "편형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF5KMLoUrR1HunActulGRvl446DUuUz4LR2NsQY780puRvuG8jiYO6Hnmn&s=10", text: "플라나리아나 디스토마처럼 몸이 납작하며 소화관 입구는 있으나 항문이 없는 선구동물은?", answer: "편형동물문", wrong: "선형동물문" },
+            { img: "https://i1.wp.com/blog.eyewire.org/wp-content/uploads/2014/08/datworm.jpg?ssl=1", text: "예쁜꼬마선충, 회충처럼 체절이 없으며 주기적으로 탈피하는 원통형 3배엽 생물군은?", answer: "선형동물문", wrong: "환형동물문" },{ img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Eurasian_red_squirrel_with_walnut.jpg/800px-Eurasian_red_squirrel_with_walnut.jpg", text: "스폰지밥의 친구 '다람이'! 지상 생활을 하며 새끼를 낳아 젖을 먹이는 다람쥐는 어느 문에 속할까?", answer: "척삭동물문", wrong: "절지동물문" }, 
+            { img: "https://img.insight.co.kr/static/2019/07/14/700/lqt17fqx2f2040y32gf0.jpg", text: "스폰지밥의 악당 '플랑크톤'! 실제 모델인 식바다물벼룩(요각류)은 관절이 있는 다리를 가졌으니 어느 문?", answer: "절지동물문", wrong: "원생생물계" },
+            { img: "https://static.pokepc.net/images/pokemon/home3d-icon-xl/regular/0010.webp?v=20260515", text: "포켓몬 '캐터피'! 나비의 애벌레 모양을 하고 있으며 키틴질 외골격을 가진 이 녀석은?", answer: "절지동물문", wrong: "편형동물문" },
+            { img: "https://tcgbox.co.kr/web/product/big/s5a/S5a_011.jpg", text: "포켓몬 '왕눈해'! 촉수에 자세포가 있어 만지면 쏘이는 해파리를 모티브로 한 이 분류군은?", answer: "자포동물문", wrong: "해면동물문" },
+            { img: "https://media.bunjang.co.kr/product/341892155_1_1751096387_w360.jpg", text: "포켓몬 '암나이트'! 고생대 바다를 누비던 암모나이트가 모티브이며 오징어처럼 두족류에 속하는 문은?", answer: "연체동물문", wrong: "극피동물문" },
+            { img: "https://static.pokepc.net/images/pokemon/home3d-icon-xl/regular/0090.webp?v=20260515", text: "포켓몬 '셀러'! 단단한 두 장의 패각을 가지고 있으며 외투막으로 몸을 감싸고 있는 이 분류군은?", answer: "연체동물문", wrong: "해면동물문" },
+            { img: "https://static.wikia.nocookie.net/pokemon/images/8/89/%ED%88%AC%EA%B5%AC_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170405085554&path-prefix=ko", text: "포켓몬 '투구'! 고대 화석 생물인 삼엽충과 투구게를 모티브로 한 외골격 동물은 어느 문일까?", answer: "절지동물문", wrong: "환형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDcYOqU9ocHGGTxzm6iT1M6xv7jzdhiUVUG1aPjmi0Jw&s=10", text: "포켓몬 '발챙이'! 배에 소용돌이 장의 형태가 비치는 올챙이(양서류 유생)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "선형동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/023.png", text: "포켓몬 '아보'! 몸이 길고 다리가 없으며 파충류에 속하는 뱀은 생물 분류상 어느 문일까?", answer: "척삭동물문", wrong: "환형동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/007.png", text: "포켓몬 '꼬부기'! 단단한 등껍질 속에 척추뼈가 들어 있는 거북이는 어느 분류군에 속할까?", answer: "척삭동물문", wrong: "극피동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png", text: "포켓몬 '쁘사이저'! 곤충인 사슴벌레를 모티브로 하였으며 몸이 머리, 가슴, 배로 나뉘는 문은?", answer: "절지동물문", wrong: "연체동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/590.png", text: "포켓몬 '깜놀버섯'! 균사로 몸이 이루어져 있고 광합성을 하지 못해 종속영양을 하는 이 계(Kingdom)는?", answer: "균계", wrong: "식물계" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/070.png", text: "포켓몬 '우츠동'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 씨방이 있는 이 분류는?", answer: "속씨식물", wrong: "양치식물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/103.png", text: "포켓몬 '나시'! 야자나무를 모티브로 했으며 밑씨가 씨방 속에 안전하게 들어 있는 이 식물군은?", answer: "속씨식물", wrong: "나자식물" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/039.png", text: "포켓몬 '푸린'! 털이 나 있고 귀가 발달한 토끼 같은 포유류 형상을 한 이 포켓몬의 동물문은?", answer: "척삭동물문", wrong: "자포동물문" },
+            { img: "https://i.namu.wiki/i/hTVAqVSm4EJ2vMamwaGdxmZ3vt7FzEAeRiGTvGiAv7CYjI15I5B0cqFIZeGm4ligAXXoCjSVn4tNII_PCMZQEw.gif", text: "톰과 제리의 '제리'! 영리하고 날쌔며 앞니가 발달한 쥐(포유류)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "절지동물문" },
+            { img: "https://cdn.it.chosun.com/news/photo/201801/2018012385009_6.jpg", text: "디즈니의 '도날드 덕'! 온몸이 깃털로 덮여 있고 날개를 가진 조류(오리)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "연체동물문" },
+            { img: "https://i.namu.wiki/i/aJM5ISqRq3jgrl6aGzBoZM4GYYGbJM4H33S2kb3gwL5NBtNCtzdrolOmATiP2E2hdrwtaYGQYIvcIT-L6lv3Kw.webp", text: "라이온 킹의 '심바'! 맹수이자 고양이과 동물인 사자는 생물 분류체계상 어느 문에 속하는가?", answer: "척삭동물문", wrong: "절지동물문" },
+            { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/7LyG/image/qJkMNM4WOVCojahrPtLTMAO4o5s", text: "스폰지밥의 애완동물 '핑핑이'! 기어 다니는 배(복족류)와 석회질 패각을 가진 달팽이는 어느 문?", answer: "연체동물문", wrong: "절지동물문" },
+            { img: "https://upload.wikimedia.org/wikipedia/en/d/dc/Perry_the_Platypus.png", text: "피니와 퍼브의 '페리'! 알을 낳지만 새끼에게 젖을 먹이는 기이한 동물인 오리너구리의 동물문은?", answer: "척삭동물문", wrong: "연체동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/069.png", text: "포켓몬 '모다피'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 밑씨가 씨방 속에 들어 있는 이 식물 분류군은?", answer: "속씨식물", wrong: "양치식물문" }
         ];
 
         let quizSet = [], currentQ = 0, score = 0, playerNick = "";
