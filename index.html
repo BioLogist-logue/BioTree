@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Biologue - 생물 분류체계🌿 (2.0 라이브리 복구본)</title>
+    <title>biologue-생물 계통수🌿(2.0)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -501,21 +501,41 @@
          * 6. 문제은행 퀴즈 및 Supabase 시스템
          */
         const questionBank = [
-            { img: "https://images.unsplash.com/photo-1598449426314-8b0101c51828?w=500", text: "교과서 속 달팽이나 오징어처럼 체절이 없고 부드러운 외투막을 가진 분류군은?", answer: "연체동물문", wrong: "환형동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/4/46/Eisenia_foetida_R.H._%288%29.JPG", text: "몸에 고리 모양의 뚜렷한 체절이 있으며 폐쇄혈관계를 가진 지렁이와 거머리는 어느 문?", answer: "환형동물문", wrong: "선형동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/1200px-SpongeBob_SquarePants_character.svg.png", text: "스폰지밥의 실제 모델! 배엽을 형성하지 않는 가장 원시적인 무배엽 동물군은?", answer: "해면동물문", wrong: "자포동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/3/33/Patrick_Star.svg/1200px-Patrick_Star.svg.png", text: "귀여운 뚱이! 성체는 방사대칭이며 수관계와 관족으로 이동하는 불가사리, 성게 무리는?", answer: "극피동물문", wrong: "연체동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/Squidward_Tentacles.svg/1200px-Squidward_Tentacles.svg.png", text: "징징이는 촉수관/담륜자 무리에 속하며 두족류에 해당합니다. 어느 분류문일까요?", answer: "연체동물문", wrong: "절지동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Mr._Krabs.svg/1200px-Mr._Krabs.svg.png", text: "집게사장과 포켓몬 크랩! 키틴질 외골격을 가지며 탈피를 통해 생장하는 동물군은?", answer: "절지동물문", wrong: "환형동물문" },
-            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/025.png", text: "전기쥐 피카츄! 일생 또는 발생 과정 중 등쪽에 속이 빈 신경관과 척삭이 나타나는 문은?", answer: "척삭동물문", wrong: "절지동물문" },
-            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png", text: "파닥거리는 잉어킹! 발생 초기에 척삭이 나타났으나 자라면서 척추로 대체되는 포괄적 분류군은?", answer: "척삭동물문", wrong: "연체동물문" },
-            { img: "https://images.pexels.com/photos/29819857/pexels-photo-29819857.jpeg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "은행식물문", wrong: "구과식물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Algae_Algonquin.jpg", text: "짚신벌레, 미역, 다시마처럼 진핵생물 중 균계, 식물계, 동물계를 제외한 과도기적 생물계는?", answer: "원생생물계", wrong: "고세균계" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdLXvvqQK6KljH87MFNCx2AVEkLQJpOJgVag&s", text: "교과서에 나오는 솔이끼처럼 유관속(관다발)이 발달하지 않은 대표적인 식물군은?", answer: "선태식물문", wrong: "양치식물문" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJ9YtTK2uj75TV0d7_bqxwhKiwWaOG6_uYA&s", text: "포자로 번식하지만 뿌리, 줄기, 잎이 뚜렷하고 관다발이 발달한 고사리는 어디에 속할까?", answer: "양치식물문", wrong: "선태식물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Jelly_cc11.jpg", text: "꽃모자해파리와 담황줄말미잘처럼 방사대칭 구조를 지닌 2배엽 구조의 포식성 동물군은?", answer: "자포동물문", wrong: "편형동물문" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8kM2gvzhG7MsahsJPyCYj-7pRwrJ3WvrmSw&s", text: "플라나리아나 디스토마처럼 몸이 납작하며 소화관 입구는 있으나 항문이 없는 선구동물은?", answer: "편형동물문", wrong: "선형동물문" },
-            { img: "https://upload.wikimedia.org/wikipedia/commons/4/45/C_elegans_DIC_s.jpg", text: "예쁜꼬마선충, 회충처럼 체절이 없으며 주기적으로 탈피하는 원통형 3배엽 생물군은?", answer: "선형동물문", wrong: "환형동물문" }
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgrDBhRMfQK4jmaLDfGeJwrOPLYQ9KM_4RchHAW90UiA&s=10", text: "교과서 속 달팽이나 오징어처럼 체절이 없고 부드러운 외투막을 가진 분류군은?", answer: "연체동물문", wrong: "환형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9Odp7072hW1bJwHNzHZRqaQmc6WjouLu4S2gh3_G1aw&s=10", text: "몸에 고리 모양의 뚜렷한 체절이 있으며 폐쇄혈관계를 가진 지렁이와 거머리는 어느 문?", answer: "환형동물문", wrong: "선형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNfaQlcvg7pao5Hj_j0VJGA6uDv-_syMetbytu-7Lnmw&s=10", text: "넴모넴모 스폰지밥의 실제 모델! 배엽을 형성하지 않는 가장 원시적인 무배엽 동물군은?", answer: "해면동물문", wrong: "자포동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ9awSFzlXqWA-GYP2CH87aEes7Y9kAPaMLBawh8TCzg&s=10", text: "귀여운 뚱이! 성체는 방사대칭이며 수관계와 관족으로 이동하는 불가사리, 성게 무리는?", answer: "극피동물문", wrong: "연체동물문" },
+            { img: "https://mblogthumb-phinf.pstatic.net/MjAyMTAxMDdfMjE3/MDAxNjEwMDEyMzAzMjI2.sAWMz0e4a_3ZN6Gj1rOumFSUUWHa-uUr388r1hX7sv4g.DN5bE9vCSBb92VmyEMrGWwMfz6l8tDWxBlSMhHAhZlog.JPEG.hiyuns00/IMG_8903.JPG?type=w800", text: "징징이는 촉수관/담륜자 무리에 속하며 두족류에 해당합니다. 어느 분류문일까요?", answer: "연체동물문", wrong: "절지동물문" },
+            { img: "https://i1.sndcdn.com/artworks-oKnp6FNTn4ZhtINF-foNy2A-t500x500.jpg", text: "돈 좋아하는 집게사장! 키틴질 외골격을 가지며 탈피를 통해 생장하는 동물군은?", answer: "절지동물문", wrong: "환형동물문" },
+            { img: "https://www.animationmagazine.net/wordpress/wp-content/uploads/pokemon-detective-pikachu.jpg", text: "전기쥐 피카츄! 일생 또는 발생 과정 중 등쪽에 속이 빈 신경관과 척삭이 나타나는 문은?", answer: "척삭동물문", wrong: "절지동물문" },
+            { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/cnoC/image/013bLiTo1KqwkuI0ObMpa4rCzM4", text: "파닥거리는 잉어킹! 발생 초기에 척삭이 나타났으나 자라면서 척추로 대체되는 포괄적 분류군은?", answer: "척삭동물문", wrong: "연체동물문" },
+            { img: "https://cdn.eduplusnews.com/news/photo/202509/16269_21416_268.jpg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "은행식물문", wrong: "구과식물문" },
+            { img: "https://db.kookje.co.kr/news2000/photo/2018/0620/L20180620.22021009399i1.jpg", text: "짚신벌레, 미역, 다시마처럼 진핵생물 중 균계, 식물계, 동물계를 제외한 과도기적 생물계는?", answer: "원생생물계", wrong: "고세균계" },
+            { img: "https://d2fwaet2smbydf.cloudfront.net/species/JMr6nwXUDusNXgm1nmq.jpg", text: "교과서에 나오는 솔이끼처럼 유관속(관다발)이 발달하지 않은 대표적인 식물군은?", answer: "선태식물문", wrong: "양치식물문" },
+            { img: "https://mblogthumb-phinf.pstatic.net/MjAyMDA4MTFfMjM4/MDAxNTk3MTQ1NDQ4NDk2.T6HG7vdQe0TbhkdWqE7hDKtrZ4s9-MhuLtASt2zkhiIg.LEF6KHE4-bIwdPiiqW_fQxqGD-4S_ask3r9I-ppvx8Eg.JPEG.aaaaahi/1597145449708.jpg?type=w800", text: "포자로 번식하지만 뿌리, 줄기, 잎이 뚜렷하고 관다발이 발달한 고사리는 어디에 속할까?", answer: "양치식물문", wrong: "선태식물문" },
+            { img: "https://cdn.imweb.me/upload/S20230405aa1434cc7cb6a/8ea5be7f10dbb.jpg", text: "꽃모자해파리와 담황줄말미잘처럼 방사대칭 구조를 지닌 2배엽 구조의 포식성 동물군은?", answer: "자포동물문", wrong: "편형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF5KMLoUrR1HunActulGRvl446DUuUz4LR2NsQY780puRvuG8jiYO6Hnmn&s=10", text: "플라나리아나 디스토마처럼 몸이 납작하며 소화관 입구는 있으나 항문이 없는 선구동물은?", answer: "편형동물문", wrong: "선형동물문" },
+            { img: "https://i1.wp.com/blog.eyewire.org/wp-content/uploads/2014/08/datworm.jpg?ssl=1", text: "예쁜꼬마선충, 회충처럼 체절이 없으며 주기적으로 탈피하는 원통형 3배엽 생물군은?", answer: "선형동물문", wrong: "환형동물문" },{ img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Eurasian_red_squirrel_with_walnut.jpg/800px-Eurasian_red_squirrel_with_walnut.jpg", text: "스폰지밥의 친구 '다람이'! 지상 생활을 하며 새끼를 낳아 젖을 먹이는 다람쥐는 어느 문에 속할까?", answer: "척삭동물문", wrong: "절지동물문" }, 
+            { img: "https://img.insight.co.kr/static/2019/07/14/700/lqt17fqx2f2040y32gf0.jpg", text: "스폰지밥의 악당 '플랑크톤'! 실제 모델인 식바다물벼룩(요각류)은 관절이 있는 다리를 가졌으니 어느 문?", answer: "절지동물문", wrong: "원생생물계" },
+            { img: "https://static.pokepc.net/images/pokemon/home3d-icon-xl/regular/0010.webp?v=20260515", text: "포켓몬 '캐터피'! 나비의 애벌레 모양을 하고 있으며 키틴질 외골격을 가진 이 녀석은?", answer: "절지동물문", wrong: "편형동물문" },
+            { img: "https://tcgbox.co.kr/web/product/big/s5a/S5a_011.jpg", text: "포켓몬 '왕눈해'! 촉수에 자세포가 있어 만지면 쏘이는 해파리를 모티브로 한 이 분류군은?", answer: "자포동물문", wrong: "해면동물문" },
+            { img: "https://media.bunjang.co.kr/product/341892155_1_1751096387_w360.jpg", text: "포켓몬 '암나이트'! 고생대 바다를 누비던 암모나이트가 모티브이며 오징어처럼 두족류에 속하는 문은?", answer: "연체동물문", wrong: "극피동물문" },
+            { img: "https://static.pokepc.net/images/pokemon/home3d-icon-xl/regular/0090.webp?v=20260515", text: "포켓몬 '셀러'! 단단한 두 장의 패각을 가지고 있으며 외투막으로 몸을 감싸고 있는 이 분류군은?", answer: "연체동물문", wrong: "해면동물문" },
+            { img: "https://static.wikia.nocookie.net/pokemon/images/8/89/%ED%88%AC%EA%B5%AC_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170405085554&path-prefix=ko", text: "포켓몬 '투구'! 고대 화석 생물인 삼엽충과 투구게를 모티브로 한 외골격 동물은 어느 문일까?", answer: "절지동물문", wrong: "환형동물문" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDcYOqU9ocHGGTxzm6iT1M6xv7jzdhiUVUG1aPjmi0Jw&s=10", text: "포켓몬 '발챙이'! 배에 소용돌이 장의 형태가 비치는 올챙이(양서류 유생)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "선형동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/023.png", text: "포켓몬 '아보'! 몸이 길고 다리가 없으며 파충류에 속하는 뱀은 생물 분류상 어느 문일까?", answer: "척삭동물문", wrong: "환형동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/007.png", text: "포켓몬 '꼬부기'! 단단한 등껍질 속에 척추뼈가 들어 있는 거북이는 어느 분류군에 속할까?", answer: "척삭동물문", wrong: "극피동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png", text: "포켓몬 '쁘사이저'! 곤충인 사슴벌레를 모티브로 하였으며 몸이 머리, 가슴, 배로 나뉘는 문은?", answer: "절지동물문", wrong: "연체동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/590.png", text: "포켓몬 '깜놀버섯'! 균사로 몸이 이루어져 있고 광합성을 하지 못해 종속영양을 하는 이 계(Kingdom)는?", answer: "균계", wrong: "식물계" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/070.png", text: "포켓몬 '우츠동'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 씨방이 있는 이 분류는?", answer: "속씨식물", wrong: "양치식물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/103.png", text: "포켓몬 '나시'! 야자나무를 모티브로 했으며 밑씨가 씨방 속에 안전하게 들어 있는 이 식물군은?", answer: "속씨식물", wrong: "나자식물" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/039.png", text: "포켓몬 '푸린'! 털이 나 있고 귀가 발달한 토끼 같은 포유류 형상을 한 이 포켓몬의 동물문은?", answer: "척삭동물문", wrong: "자포동물문" },
+            { img: "https://i.namu.wiki/i/hTVAqVSm4EJ2vMamwaGdxmZ3vt7FzEAeRiGTvGiAv7CYjI15I5B0cqFIZeGm4ligAXXoCjSVn4tNII_PCMZQEw.gif", text: "톰과 제리의 '제리'! 영리하고 날쌔며 앞니가 발달한 쥐(포유류)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "절지동물문" },
+            { img: "https://cdn.it.chosun.com/news/photo/201801/2018012385009_6.jpg", text: "디즈니의 '도날드 덕'! 온몸이 깃털로 덮여 있고 날개를 가진 조류(오리)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "연체동물문" },
+            { img: "https://i.namu.wiki/i/aJM5ISqRq3jgrl6aGzBoZM4GYYGbJM4H33S2kb3gwL5NBtNCtzdrolOmATiP2E2hdrwtaYGQYIvcIT-L6lv3Kw.webp", text: "라이온 킹의 '심바'! 맹수이자 고양이과 동물인 사자는 생물 분류체계상 어느 문에 속하는가?", answer: "척삭동물문", wrong: "절지동물문" },
+            { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/7LyG/image/qJkMNM4WOVCojahrPtLTMAO4o5s", text: "스폰지밥의 애완동물 '핑핑이'! 기어 다니는 배(복족류)와 석회질 패각을 가진 달팽이는 어느 문?", answer: "연체동물문", wrong: "절지동물문" },
+            { img: "https://upload.wikimedia.org/wikipedia/en/d/dc/Perry_the_Platypus.png", text: "피니와 퍼브의 '페리'! 알을 낳지만 새끼에게 젖을 먹이는 기이한 동물인 오리너구리의 동물문은?", answer: "척삭동물문", wrong: "연체동물문" },
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/069.png", text: "포켓몬 '모다피'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 밑씨가 씨방 속에 들어 있는 이 식물 분류군은?", answer: "속씨식물", wrong: "양치식물문" }
         ];
 
         let quizSet = [], currentQ = 0, score = 0, playerNick = "";
