@@ -40,7 +40,7 @@
         .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
         @media (max-width: 768px) { .node-label { font-size: 11px; } .sidebar { position: fixed; transform: translateX(-100%); height: 100%; } .sidebar.open { transform: translateX(0); } }
         
-        /* 🔥 띨빡이의 유일한 수정 구역: paint-order 및 색상 필터를 수정하여 글자가 선명하게 보이도록 수정! */
+        /* paint-order 및 색상 필터를 수정하여 글자가 선명하게 보이도록 수정! */
         .key-label { font-size: 11px; fill: #60a5fa !important; font-weight: 900; paint-order: stroke; stroke: #000000; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
         .node { cursor: pointer; }
         .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
@@ -74,7 +74,7 @@
             <div class="mb-6">
                 <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-3">탐구 메뉴</p>
                 <button class="tab-btn active" onclick="switchTab('dashboard', this)">🌿 생물 분류 탐험</button>
-                <button class="tab-btn" onclick="switchTab('quiz', this)">🎮 포켓몬 분류 퀴즈</button>
+                <button class="tab-btn" onclick="switchTab('quiz', this)">🎮 생물 분류 퀴즈</button>
             </div>
 
             <div class="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4">
@@ -96,7 +96,6 @@
         📝 Science Blog - bioLogue_
     </a>
 </div>
-💡 띨빡이의 사용 설명서
         </nav>
 
         <main class="content">
@@ -245,14 +244,12 @@
         window.closePopup = function() {
             document.getElementById('info-popup').classList.remove('popup-active');
         };
-        
-        // 🔥 여기가 복구된 라이브리 팝업 오픈 함수입니다! 🔥
+
         window.openContact = function(e) {
             e.preventDefault(); 
             document.getElementById('contact-popup').classList.add('active');
         };
 
-        // 🔥 라이브리 팝업 닫기 함수입니다! 🔥
         window.closeContact = function() {
             document.getElementById('contact-popup').classList.remove('active');
         };
@@ -509,7 +506,7 @@
             if(match) {
                 if(window.renderTree) window.renderTree(match.treeKey, match.name);
             } else {
-                alert("앗! 교과서나 PPT 자료에 등록되지 않은 생물군입니다. 정확한 명칭을 확인해 주세요! 😢");
+                alert("앗! 교과서나 수업 자료에 등록되지 않은 생물군입니다. 정확한 명칭을 확인해 주세요! 😢");
             }
         };
 
