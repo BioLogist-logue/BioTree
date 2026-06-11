@@ -38,7 +38,13 @@
         
         /* 노드 글자 테두리 처리 (가독성용) */
         .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
-        @media (max-width: 768px) { .node-label { font-size: 11px; } .sidebar { position: fixed; transform: translateX(-100%); height: 100%; } .sidebar.open { transform: translateX(0); } }
+        
+        /* 🔥 픽스 2: 모바일 환경에서 사이드바가 검색창(150)을 완전히 덮도록 z-index 계층 업그레이드! */
+        @media (max-width: 768px) { 
+            .node-label { font-size: 11px; } 
+            .sidebar { position: fixed; transform: translateX(-100%); height: 100%; z-index: 250; } 
+            .sidebar.open { transform: translateX(0); } 
+        }
         
         /* paint-order 및 색상 필터를 수정하여 글자가 선명하게 보이도록 수정! */
         .key-label { font-size: 11px; fill: #60a5fa !important; font-weight: 900; paint-order: stroke; stroke: #000000; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
@@ -48,8 +54,8 @@
         .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
         .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
         
-        /* 모바일 햄버거 메뉴 */
-        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 200; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; }
+        /* ⚙️ 픽스 2연타: 모바일 햄버거 메뉴 버튼이 향상된 사이드바(250) 위에서도 누를 수 있게 z-index를 260으로 동반 격상 */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 260; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; }
         @media (max-width: 768px) { .mobile-menu-btn { display: block; } }
 
         /* 스크롤바 및 팝업 애니메이션 */
@@ -78,24 +84,24 @@
             </div>
 
             <div class="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4">
-    <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">biologue_생명과학 유니버스 바로가기</p>
-    
-    <a href="https://biologist-logue.github.io/cell-game/" target="_blank" class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
-        🎮 세포 추리 게임
-    </a>
-    
-    <a href="https://enzyme-3d-simulator.streamlit.app/" target="_blank" class="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 mt-1">
-        🧪 효소 3D 탐구 시뮬레이터
-    </a>
+                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">biologue_생명과학 유니버스 바로가기</p>
+                
+                <a href="https://biologist-logue.github.io/cell-game/" target="_blank" class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+                    🎮 세포 추리 게임
+                </a>
+                
+                <a href="https://enzyme-3d-simulator.streamlit.app/" target="_blank" class="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 mt-1">
+                    🧪 효소 3D 탐구 시뮬레이터
+                </a>
 
-    <a href="https:/_또다른_대시보드_주소.com" target="_blank" class="text-xs font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 mt-1">
-        🧬 준비중...
-    </a>
-    
-    <a href="http://blog.naver.com/biologue_" target="_blank" class="text-xs font-bold text-green-400 hover:text-green-300 transition-colors flex items-center gap-1 mt-1">
-        📝 Science Blog - bioLogue_
-    </a>
-</div>
+                <a href="https:/_또다른_대시보드_주소.com" target="_blank" class="text-xs font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 mt-1">
+                    🧬 준비중...
+                </a>
+                
+                <a href="http://blog.naver.com/biologue_" target="_blank" class="text-xs font-bold text-green-400 hover:text-green-300 transition-colors flex items-center gap-1 mt-1">
+                    📝 Science Blog - bioLogue_
+                </a>
+            </div>
         </nav>
 
         <main class="content">
@@ -147,14 +153,14 @@
 
                         <div id="quiz-result" class="hidden text-center py-8 space-y-6 flex flex-col gap-4">
                             <h2 class="text-3xl font-black text-green-400">🎉 플레이 완료!</h2>
-                            <p class="text-xl text-gray-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
+                            <p class="text-xl text-slate-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
                             <button onclick="restartQuizSetup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl border border-white/10 transition-colors">다시 도전하기</button>
                         </div>
                     </div>
 
                     <div class="w-full lg:w-80 bg-slate-900 border border-white/10 p-6 rounded-3xl shadow-2xl flex flex-col">
                         <h3 class="text-lg font-black text-yellow-400 mb-4 flex items-center gap-2">🏆 실시간 명예의 전당 (TOP 3)</h3>
-                        <p class="text-[11px] text-slate-500 mb-4 leading-tight">실시간 전광판 기술이 적용되어 친구들의 점수가 실시간 반영됩니다.</p>
+                        <p class="text-[11px] text-slate-500 mb-4 leading-tight">수파베이스 실시간 전광판 기술이 적용되어 동기들의 점수가 실시간 반영됩니다.</p>
                         <div id="leaderboard" class="flex flex-col gap-3 flex-1 justify-start">
                             <div class="text-center text-slate-600 mt-10 font-bold text-xs">랭킹 데이터를 동기화하는 중...</div>
                         </div>
@@ -233,7 +239,7 @@
             if(window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open'); 
             
             if(tabId === 'dashboard' && window.renderTree) { 
-                setTimeout(() => window.renderTree(currentLevel), 50); 
+                setTimeout(() => window.renderTree(currentLevel, currentHighlightName), 50); 
             }
         };
 
@@ -244,7 +250,7 @@
         window.closePopup = function() {
             document.getElementById('info-popup').classList.remove('popup-active');
         };
-
+        
         window.openContact = function(e) {
             e.preventDefault(); 
             document.getElementById('contact-popup').classList.add('active');
@@ -371,7 +377,8 @@
         /**
          * 4. D3.js 계통수 코어
          */
-        let svg, g, zoomObj, currentLevel = 'full';
+        // ⚙️ 픽스 1: 모바일 키보드Retract 상태 리사이즈 관리를 위한 하이라이트 상태 보존 변수 추가
+        let svg, g, zoomObj, currentLevel = 'full', currentHighlightName = null;
 
         window.onload = function() {
             svg = d3.select("#tree-canvas").append("svg").attr("width", "100%").attr("height", "100%");
@@ -381,6 +388,7 @@
             
             window.renderTree = function(level, highlightName = null) {
                 currentLevel = level;
+                currentHighlightName = highlightName; // ⚙️ 픽스 1 연타: 렌더링 호출 시마다 현재 상태 강제 동기화
                 g.selectAll("*").remove(); 
                 
                 const data = treeData[level];
@@ -482,9 +490,10 @@
 
             window.renderTree('full');
             
+            // ⚙️ 픽스 1 완료: 모바일 소프트 키보드가 닫히면서 일어나는 resize 시점에 검색 하이라이트 인자 값을 유실하지 않도록 수정!
             window.addEventListener('resize', () => {
                 if(document.getElementById('tab-dashboard').classList.contains('active')) {
-                    window.renderTree(currentLevel);
+                    window.renderTree(currentLevel, currentHighlightName); 
                 }
             });
         };
@@ -529,7 +538,7 @@
             { img: "https://cdn.imweb.me/upload/S20230405aa1434cc7cb6a/8ea5be7f10dbb.jpg", text: "꽃모자해파리와 담황줄말미잘처럼 방사대칭 구조를 지닌 2배엽 구조의 포식성 동물군은?", answer: "자포동물문", wrong: "편형동물문" },
             { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF5KMLoUrR1HunActulGRvl446DUuUz4LR2NsQY780puRvuG8jiYO6Hnmn&s=10", text: "플라나리아나 디스토마처럼 몸이 납작하며 소화관 입구는 있으나 항문이 없는 선구동물은?", answer: "편형동물문", wrong: "선형동물문" },
             { img: "https://i1.wp.com/blog.eyewire.org/wp-content/uploads/2014/08/datworm.jpg?ssl=1", text: "예쁜꼬마선충, 회충처럼 체절이 없으며 주기적으로 탈피하는 원통형 3배엽 생물군은?", answer: "선형동물문", wrong: "환형동물문" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYVNuWv_-JHLSMl9ztFgZCrumQwdXOsKKh5-mwWD64e42i4PcSwuK5DfBT&s=10", text: "스폰지밥의 친구 '다람이'! 지상 생활을 하며 새끼를 낳아 젖을 먹이는 다람쥐는 어느 문에 속할까?", answer: "척삭동물문", wrong: "절지동물문" }, 
+            { img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Eurasian_red_squirrel_with_walnut.jpg/800px-Eurasian_red_squirrel_with_walnut.jpg", text: "스폰지밥의 친구 '다람이'! 지상 생활을 하며 새끼를 낳아 젖을 먹이는 다람쥐는 어느 문에 속할까?", answer: "척삭동물문", wrong: "절지동물문" }, 
             { img: "https://img.insight.co.kr/static/2019/07/14/700/lqt17fqx2f2040y32gf0.jpg", text: "스폰지밥의 악당 '플랑크톤'! 실제 모델인 식바다물벼룩(요각류)은 관절이 있는 다리를 가졌으니 어느 문?", answer: "절지동물문", wrong: "원생생물계" },
             { img: "https://static.pokepc.net/images/pokemon/home3d-icon-xl/regular/0010.webp?v=20260515", text: "포켓몬 '캐터피'! 나비의 애벌레 모양을 하고 있으며 키틴질 외골격을 가진 이 녀석은?", answer: "절지동물문", wrong: "편형동물문" },
             { img: "https://tcgbox.co.kr/web/product/big/s5a/S5a_011.jpg", text: "포켓몬 '왕눈해'! 촉수에 자세포가 있어 만지면 쏘이는 해파리를 모티브로 한 이 분류군은?", answer: "자포동물문", wrong: "해면동물문" },
@@ -548,6 +557,7 @@
             { img: "https://cdn.it.chosun.com/news/photo/201801/2018012385009_6.jpg", text: "디즈니의 '도날드 덕'! 온몸이 깃털로 덮여 있고 날개를 가진 조류(오리)는 어느 문에 속할까?", answer: "척삭동물문", wrong: "연체동물문" },
             { img: "https://i.namu.wiki/i/aJM5ISqRq3jgrl6aGzBoZM4GYYGbJM4H33S2kb3gwL5NBtNCtzdrolOmATiP2E2hdrwtaYGQYIvcIT-L6lv3Kw.webp", text: "라이온 킹의 '심바'! 맹수이자 고양이과 동물인 사자는 생물 분류체계상 어느 문에 속하는가?", answer: "척삭동물문", wrong: "절지동물문" },
             { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/7LyG/image/qJkMNM4WOVCojahrPtLTMAO4o5s", text: "스폰지밥의 애완동물 '핑핑이'! 기어 다니는 배(복족류)와 석회질 패각을 가진 달팽이는 어느 문?", answer: "연체동물문", wrong: "절지동물문" },
+            { img: "https://upload.wikimedia.org/wikipedia/en/d/dc/Perry_the_Platypus.png", text: "피니와 퍼브의 '페리'! 알을 낳지만 새끼에게 젖을 먹이는 기이한 동물인 오리너구리의 동물문은?", answer: "척삭동물문", wrong: "연체동물문" },
             { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/069.png", text: "포켓몬 '모다피'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 밑씨가 씨방 속에 들어 있는 이 식물 분류군은?", answer: "속씨식물", wrong: "양치식물문" }
         ];
 
