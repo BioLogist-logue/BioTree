@@ -9,56 +9,53 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* 폰트 및 기본 화면 설정 */
+        /* 1. 기본 스타일 및 레이아웃 구조 */
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         body, html { margin:0; padding:0; width:100%; height:100%; background-color:#020617; color:#ffffff; font-family:'Pretendard', sans-serif; overflow:hidden; touch-action: none; }
         
-        /* 레이아웃 구조 (사이드바 + 메인콘텐츠) */
         .wrapper { display: flex; width: 100vw; height: 100vh; }
         .sidebar { width: 250px; background-color: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.1); padding: 20px; display: flex; flex-direction: column; z-index: 100; transition: transform 0.3s ease; flex-shrink: 0; }
         .content { flex: 1; position: relative; overflow: hidden; height: 100%; }
         
-        /* 탭 메뉴 스타일 */
+        /* 2. 탭 내비게이션 스타일 */
         .tab-btn { display: block; width: 100%; padding: 12px 15px; margin-bottom: 10px; border-radius: 8px; text-align: left; font-weight: 800; color: #94a3b8; transition: all 0.2s; cursor: pointer; border: none; background: transparent; }
         .tab-btn:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
         .tab-btn.active { background-color: #3b82f6; color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .tab-content { display: none; width: 100%; height: 100%; position: absolute; top:0; left:0; right:0; bottom:0; }
         .tab-content.active { display: block; }
         
-        /* 검색창 스타일 */
+        /* 3. 상단 우측 검색창 컴포넌트 */
         .search-container { position: absolute; top: 40px; right: 20px; z-index: 150; display: flex; gap: 10px; background: rgba(15,23,42,0.8); padding: 8px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .search-input { background: rgba(0,0,0,0.5); border: 1px solid #475569; color: #fff; padding: 6px 12px; border-radius: 10px; outline: none; width: 200px; font-weight: bold; font-size: 13px; }
         .search-input:focus { border-color: #3b82f6; }
         .search-btn { background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 13px; }
 
-        /* 계통수 캔버스 및 선(Link) 스타일 */
+        /* 4. D3 계통수 노드/링크 그래픽 요소 */
         #tree-canvas { width: 100%; height: 100%; position: absolute; top:0; left:0; }
         .link { fill: none; stroke: #475569; stroke-width: 2.5px; stroke-opacity: 0.4; transition: all 0.5s ease; }
         .extra-link { stroke: #3b82f6; stroke-dasharray: 4,4; stroke-opacity: 0.6; }
         
-        /* 노드 글자 테두리 처리 (가독성용) */
-        .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+        .node { cursor: pointer; }
+        .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
+        .node.highlighted circle { stroke: #ff4757; stroke-width: 4px; filter: drop-shadow(0 0 15px #ff4757); }
         
-        /* 모바일 환경에서 사이드바가 검색창(150)을 완전히 덮도록 z-index 계층 업그레이드! */
+        /* 5. 텍스트 레이블 가독성 커스텀 (글자 외곽 테두리 처리) */
+        .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+        .key-label { font-size: 11px; fill: #60a5fa !important; font-weight: 900; paint-order: stroke; stroke: #000000; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+        
+        /* 6. 모바일 반응형 브레이크 포인트 디렉티브 */
         @media (max-width: 768px) { 
             .node-label { font-size: 11px; } 
             .sidebar { position: fixed; transform: translateX(-100%); height: 100%; z-index: 300; } 
             .sidebar.open { transform: translateX(0); } 
         }
         
-        /* paint-order 및 색상 필터를 수정하여 글자가 선명하게 보이도록 수정! */
-        .key-label { font-size: 11px; fill: #60a5fa !important; font-weight: 900; paint-order: stroke; stroke: #000000; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
-        .node { cursor: pointer; }
-        .node:hover circle { stroke: #3b82f6; stroke-width: 3px; filter: drop-shadow(0 0 8px #3b82f6); }
-        .node.highlighted circle { stroke: #ff4757; stroke-width: 4px; filter: drop-shadow(0 0 15px #ff4757); }
-        .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
-        .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
-        
-        /* 🔥 띨빡이의 무빙 패치: 사이드바 움직임과 싱크로율을 맞추기 위해 transition: transform 0.3s 추가! */
-        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 260; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; transition: transform 0.3s ease; }
+        /* 7. 모바일 메뉴 버튼 및 UI 모달창 효과 */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 310; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; transition: transform 0.3s ease; }
         @media (max-width: 768px) { .mobile-menu-btn { display: block; } }
 
-        /* 스크롤바 및 팝업 애니메이션 */
+        .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
+        .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -85,19 +82,15 @@
 
             <div class="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4">
                 <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">biologue_생명과학 유니버스 바로가기</p>
-                
                 <a href="https://biologist-logue.github.io/cell-game/" target="_blank" class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
                     🎮 세포 추리 게임
                 </a>
-                
                 <a href="https://enzyme-3d-simulator.streamlit.app/" target="_blank" class="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 mt-1">
                     🧪 효소 3D 탐구 시뮬레이터
                 </a>
-
                 <a href="https:/_또다른_대시보드_주소.com" target="_blank" class="text-xs font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 mt-1">
                     🧬 준비중...
                 </a>
-                
                 <a href="http://blog.naver.com/biologue_" target="_blank" class="text-xs font-bold text-green-400 hover:text-green-300 transition-colors flex items-center gap-1 mt-1">
                     📝 Science Blog - bioLogue_
                 </a>
@@ -153,7 +146,7 @@
 
                         <div id="quiz-result" class="hidden text-center py-8 space-y-6 flex flex-col gap-4">
                             <h2 class="text-3xl font-black text-green-400">🎉 플레이 완료!</h2>
-                            <p class="text-xl text-gray-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
+                            <p class="text-xl text-slate-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
                             <button onclick="restartQuizSetup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl border border-white/10 transition-colors">다시 도전하기</button>
                         </div>
                     </div>
@@ -222,32 +215,36 @@
 
     <script>
         /**
-         * 1. Supabase 초기화 (API 키 적용 완료 & 변수명 충돌 방지)
+         * ==========================================
+         * 1. 전역 인프라 스트럭처 및 DB 초기화
+         * ==========================================
          */
         const SUPABASE_URL = 'https://fjcddgvhsauwyqzfrmur.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqY2RkZ3Zoc2F1d3lxemZybXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5ODQwNTQsImV4cCI6MjA5NjU2MDA1NH0.KR3SiOsZl4LBI4hL4YYuPdBIXOP1C2kiwZ5uExohZZI';
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
         /**
-         * 2. UI 제어 함수 (전역 스코프로 분리하여 버튼 인식 100% 보장)
+         * ==========================================
+         * 2. 인터페이스 핸들러 및 UI 연동 함수
+         * ==========================================
          */
         window.switchTab = function(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             if(btnElement) btnElement.classList.add('active');
-            if(window.innerWidth < 768) window.toggleSidebar(); // 사이드바가 닫힐 때 메뉴 버튼 위치 원복용 토글 호출
+            if(window.innerWidth < 768) window.toggleSidebar(); 
             
             if(tabId === 'dashboard' && window.renderTree) { 
                 setTimeout(() => window.renderTree(currentLevel, currentHighlightName), 50); 
             }
         };
 
-        // 🔥 픽스 완료: 모바일 메뉴 버튼이 사이드바와 한 몸처럼 함께 밀려나도록 오프셋 가산 주입!
         window.toggleSidebar = function() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('open');
             const btn = document.querySelector('.mobile-menu-btn');
+            // 사이드바 전개 시 메뉴 버튼 동반 이동 처리 (타이틀 겹침 종결)
             if (sidebar.classList.contains('open')) {
                 btn.style.transform = 'translateX(250px)';
             } else {
@@ -269,7 +266,9 @@
         };
 
         /**
-         * 3. 계통수 오리지널 데이터
+         * ==========================================
+         * 3. 고등학교 생명과학 성취기준 무결점 데이터셋
+         * ==========================================
          */
         const treeData = {
             full: {
@@ -340,7 +339,7 @@
                 name: "동물계", color: "#f59e0b",
                 children: [
                     { name: "해면동물문", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽", "환상테타니해면"], desc: "몸에 대칭성이 없고 배엽도 형성하지 않아 진정한 의미의 조직이 발달하지 않은 가장 원시적인 동물이다. 대부분 바다에 서식하며, 깃세포가 편모를 움직여 물의 흐름을 만들고 물속에 있는 먹이를 걸러 잡은 뒤 세포 속으로 넣어 소화한다. 유생 시기에는 유영 생활을 하지만, 성체 시기에는 고착 생활을 한다.", img: "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BkMTA2LTA4MS5qcGc.jpg" },
-                    { name: "공통조상", color: "#e85e5e", key: "배엽 형성함", children: [
+                    { name: "진생동물", color: "#e85e5e", key: "배엽 형성함", children: [
                         { name: "자포동물문", key: "2배엽, 방사대칭", emoji: "🪼", color: "#5e65e8", features: ["방사대칭", "꽃모자해파리", "부채뿔산호", "담황줄말미잘"], desc: "몸이 방사 대칭인 2배엽동물이다. 몸 안쪽에 있는 속이 빈 구조인 강장에서 먹이를 소화하고 흡수하며, 강장의 입구가 입과 항문의 역할을 한다. 입 주변의 자세포와 촉수로 먹이를 잡는다. 유영 생활을 하는 해파리, 고착 생활을 하는 말미잘과 히드라, 석회질 골격을 형성하는 산호 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Jelly_cc11.jpg" },
                         { name: "3배엽, 좌우대칭", children: [
                             { 
@@ -384,7 +383,9 @@
         Object.keys(treeData).forEach(key => flattenTree(treeData[key], key));
 
         /**
-         * 4. D3.js 계통수 코어
+         * ==========================================
+         * 4. D3.js 계통수 렌더링 엔진 (핵심 모듈)
+         * ==========================================
          */
         let svg, g, zoomObj, currentLevel = 'full', currentHighlightName = null;
 
@@ -413,7 +414,7 @@
                 }
                 treeLayout(root);
 
-                // 🌟 [포지션 픽스 주입] 노드들 간의 수직 간격이 겹치지 않도록 강제 아래방향 이동 처리
+                // [레이아웃 좌표 커스텀 분기] 노드 간 겹침 방지 보정 구역
                 root.descendants().forEach(d => {
                     if (level === 'plantae') {
                         if (d.data.name === "관다발 식물") {
@@ -425,11 +426,11 @@
                             else d.y += 35;
                         }
                     }
-                    // 주인님이 명령하신 동물계 노드 간격 확보 구역
                     if (level === 'animalia') {
                         if (d.data.name === "3배엽, 좌우대칭") {
-                            if (!isMobile) d.x += 70; // PC 화면에서 자포동물문과 멀어지도록 아래로 하강!
-                            else d.y += 70;          // 모바일 폰에서도 이격 확보!
+                            // 🌟 [겹침 보정] 자포동물문과의 간격을 한층 더 시원하게 가산 확장 (+70 -> +110)
+                            if (!isMobile) d.x += 110; 
+                            else d.y += 90;          
                         }
                     }
                 });
@@ -479,8 +480,9 @@
                 
                 node.append("text").attr("class", "node-label")
                     .attr("dy", (d) => {
-                        // 🌟 데이터 이름 변경사항 반영: 3배엽 형성 -> 3배엽, 좌우대칭
-                        if (d.data.name === "진생동물" || d.data.name === "3배엽, 좌우대칭") return "2.5em";
+                        // 🌟 [노드 글씨 픽스] 진생동물 노드 텍스트가 위쪽 key 간섭에서 탈출하도록 2.2em 배정
+                        if (d.data.name === "진생동물") return "2.2em";
+                        if (d.data.name === "3배엽, 좌우대칭") return "2.5em";
                         if(!isMobile) return d.children ? "-1.8em" : "0.31em";
                         if(d.children) return "-2.2em";
                         return (d.parent && d.parent.children.indexOf(d) % 2 === 0) ? "2.8em" : "3.1em"; 
@@ -491,7 +493,10 @@
 
                 node.filter(d => d.data.key).append("text").attr("class", "key-label")
                     .attr("dy", (d) => {
-                        // 🌟 [겹침 픽스 완료] 해면, 자포동물문, 그리고 진생동물 노드의 key는 머리 위(-2.5em)로 로켓 발사!
+                        // 🌟 [Key 글씨 위치 픽스] 진생동물의 key '배엽 형성함' 텍스트를 노드 아래로 확실하게 격하 분리! (4.0em)
+                        if (d.data.name === "진생동물") {
+                            return "3.8em";
+                        }
                         if (d.data.name === "해면동물문" || d.data.name === "자포동물문") {
                             return "-2.5em"; 
                         }
@@ -532,7 +537,9 @@
         };
 
         /**
-         * 5. 생물 역추적 검색
+         * ==========================================
+         * 5. 지능형 생물 역추적 검색 엔진
+         * ==========================================
          */
         window.searchOrganism = function() {
             const inputField = document.getElementById('search-input');
@@ -560,7 +567,9 @@
         };
 
         /**
-         * 6. 문제은행 퀴즈 및 Supabase 시스템
+         * ==========================================
+         * 6. 대용량 퀴즈 게임 및 수파베이스 허브
+         * ==========================================
          */
         const questionBank = [
             { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANGScGrDBhRMfQK4jmaLDfGeJwrOPLYQ9KM_4RchHAW90UiA&s=10", text: "교과서 속 달팽이나 오징어처럼 체절이 없고 부드러운 외투막을 가진 분류군은?", answer: "연체동물문", wrong: "환형동물문" },
