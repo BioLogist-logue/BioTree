@@ -39,10 +39,10 @@
         /* 노드 글자 테두리 처리 (가독성용) */
         .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
         
-        /* 🔥 픽스 2: 모바일 환경에서 사이드바가 검색창(150)을 완전히 덮도록 z-index 계층 업그레이드! */
+        /* 🔥 픽스 완료: 모바일에서 사이드바가 검색창(150)을 확실하게 지붕처럼 덮도록 z-index 최상위 격상 */
         @media (max-width: 768px) { 
             .node-label { font-size: 11px; } 
-            .sidebar { position: fixed; transform: translateX(-100%); height: 100%; z-index: 250; } 
+            .sidebar { position: fixed; transform: translateX(-100%); height: 100%; z-index: 300; } 
             .sidebar.open { transform: translateX(0); } 
         }
         
@@ -54,8 +54,8 @@
         .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
         .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
         
-        /* ⚙️ 픽스 2연타: 모바일 햄버거 메뉴 버튼이 향상된 사이드바(250) 위에서도 누를 수 있게 z-index를 260으로 동반 격상 */
-        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 260; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; }
+        /* ⚙️ 픽스 연타: 햄버거 메뉴 버튼도 향상된 사이드바(300) 위에서 정상 동작하도록 z-index를 310으로 세팅 */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 310; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; }
         @media (max-width: 768px) { .mobile-menu-btn { display: block; } }
 
         /* 스크롤바 및 팝업 애니메이션 */
@@ -269,7 +269,7 @@
                 children: [
                     { 
                         name: "진정세균역", emoji: "🧫", color: "#9a1818", 
-                        key: "세포벽 펩티도글리칸 유무",
+                        key: "세포벽 펩티도글리칸",
                         children: [{ name: "진정세균계", emoji: "🧫", color: "#f64141", features: ["원핵세포", "펩티도글리칸○", "원형DNA"], desc: "단세포 원핵생물로 주로 1개의 원형 DNA를 갖고 있으며 펩티도글리칸 성분의 세포벽이 있다. 대부분 종속영양생물이지만 남세균처럼 광합성을 하는 독립영양생물도 있다. 대부분의 세균은 세균역에 속한다.", img: "https://i.shgcdn.com/4ee17b6f-b548-4ba6-99dc-56bd7bb4b7e5/-/format/auto/-/preview/3000x3000/-/quality/lighter/" }] 
                     },
                     { 
@@ -281,6 +281,7 @@
                             },
                             { 
                                 name: "진핵생물역", emoji: "🌿", color: "#1b2082", 
+                                key: "핵막과 막성 세포소기관",
                                 children: [
                                     { 
                                         name: " ", 
@@ -316,7 +317,7 @@
                         { name: "양치식물문", key: "종자X", emoji: "🌿", color: "#abfd8a", features: ["고사리", "쇠뜨기"], desc: "포자로 번식하며 뿌리, 줄기, 잎을 가지고 있는 유관속 식물 중에서 가장 오래되고 원시적인 식물이다. 배우자체와 포자체 세대를 번갈아 가며 살아가며, 포자체 세대가 배우자체 세보다 장기간 광합성을 하며 독자 생존한다.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJ9YtTK2uj75TV0d7_bqxwhKiwWaOG6_uYA&s" },
                         { name: "석송식물문", key: "종자X", emoji: "🌿", color: "#0daf3d", features: ["석송"], desc: "관다발 식물에 속하는 식물의 문이다. 솔잎란류보다 진화된 형태이며, 몸은 뿌리, 줄기, 잎으로 분화되어 있다. 잎은 비늘 모양의 작은 잎으로 줄기에 나선 모양으로 밀생하며, 분지되지 않은 1개의 잎맥을 갖는다.", img: "https://www.picturethisai.com/image-handle/website_cmsname/image/1080/153897036263981077.jpeg" },
                         { name: "종자 식물", color: "#92d113", children: [
-                            { name: "나자식물", color: "#007534", children: [
+                            { name: "나자식물", color: "#007534", key: "씨방X", children: [
                                 { name: "은행식물문", emoji: "🍁", color: "#e9e910", features: ["은행나무"], desc: "현존하는 식물 중 은행나무 단 하나만이 속하는 매우 독특하고 고립된 분류군으로, 수억 년 전부터 살아남은 '살아있는 화석'이다.", img: "https://images.pexels.com/photos/29819857/pexels-photo-29819857/free-photo-of-golden-ginkgo-leaves-in-japanese-autumn.jpeg" },
                                 { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["소철"], desc: "넓은 의미의 소철은 소철속 단일 속으로 약 100~110여 종으로 구성되며 동아프리카, 동아시아 및 동남아시아, 호주 북부에 분포한다.", img: "https://live.staticflickr.com/216/466154979_414e694bb0_b.jpg" },
                                 { name: "구과식물문", emoji: "🌴", color: "#c17c14", features: ["구상나무"], desc: "방울열매를 만드는 식물, 대개 잎이 뾰족한 모습으로 나기 때문에 침엽수라고도 한다.", img: "https://live.staticflickr.com/883/42882786211_4181b3d540_b.jpg" },
@@ -330,12 +331,12 @@
             animalia: {
                 name: "동물계", color: "#f59e0b",
                 children: [
-                    { name: "해면동물문", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽", "환상테타니해면"], desc: "몸에 대칭성이 없고 배엽도 형성하지 않아 진정한 의미의 조직이 발달하지 않은 가장 원시적인 동물이다. 대부분 바다에 서식하며, 깃세포가 편모를 움직여 물의 흐름을 만들고 물속에 있는 먹이를 걸러 잡은 뒤 세포 속으로 넣어 소화한다. 유생 시기에는 유영 생활을 하지만, 성체 시기에는 고착 생활을 한다.", img: "https://live.staticflickr.com/4388/36638777932_f62443cc46_b.jpg" },
-                    { name: "진생동물", color: "#e85e5e", children: [
-                        { name: "자포동물문", key: "2배엽", emoji: "🪼", color: "#5e65e8", features: ["방사대칭", "꽃모자해파리", "부채뿔산호", "담황줄말미잘"], desc: "몸이 방사 대칭인 2배엽동물이다. 몸 안쪽에 있는 속이 빈 구조인 강장에서 먹이를 소화하고 흡수하며, 강장의 입구가 입과 항문의 역할을 한다. 입 주변의 자세포와 촉수로 먹이를 잡는다. 유영 생활을 하는 해파리, 고착 생활을 하는 말미잘과 히드라, 석회질 골격을 형성하는 산호 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Jelly_cc11.jpg" },
-                        { name: "3배엽 형성", children: [
+                    { name: "해면동물문", key: "배엽X", emoji: "🧽", color: "#eaea5b", features: ["무배엽", "환상테타니해면"], desc: "몸에 대칭성이 없고 배엽도 형성하지 않아 진정한 의미의 조직이 발달하지 않은 가장 원시적인 동물이다. 대부분 바다에 서식하며, 깃세포가 편모를 움직여 물의 흐름을 만들고 물속에 있는 먹이를 걸러 잡은 뒤 세포 속으로 넣어 소화한다. 유생 시기에는 유영 생활을 하지만, 성체 시기에는 고착 생활을 한다.", img: "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BkMTA2LTA4MS5qcGc.jpg" },
+                    { name: "진생동물", color: "#e85e5e", key: "배엽 형성함", children: [
+                        { name: "자포동물문", key: "2배엽, 방사대칭", emoji: "🪼", color: "#5e65e8", features: ["방사대칭", "꽃모자해파리", "부채뿔산호", "담황줄말미잘"], desc: "몸이 방사 대칭인 2배엽동물이다. 몸 안쪽에 있는 속이 빈 구조인 강장에서 먹이를 소화하고 흡수하며, 강장의 입구가 입과 항문의 역할을 한다. 입 주변의 자세포와 촉수로 먹이를 잡는다. 유영 생활을 하는 해파리, 고착 생활을 하는 말미잘과 히드라, 석회질 골격을 형성하는 산호 등이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Jelly_cc11.jpg" },
+                        { name: "3배엽, 좌우대칭", children: [
                             { 
-                                name: "선구동물", color: "#8224e3",
+                                name: "선구동물", color: "#8224e3", key: "원구가 입이 됨.",
                                 children: [
                                     {
                                         name: "촉수관/담륜자", color: "#fc0202",
@@ -355,7 +356,7 @@
                                 ]
                             },
                             { 
-                                name: "후구동물", color: "#8224e3",
+                                name: "후구동물", color: "#8224e3", key: "원구가 항문이 됨.",
                                 children: [
                                     { name: "극피동물문", emoji: "⭐", color: "#fcfc02", features: ["수관계", "해삼", "불가사리", "성게", "뚱이"], desc: "유생 시기의 몸은 좌우 대칭이지만 성체 시기의 몸은 방사 대칭인 3배엽동물이다. 체표면에 내골격과 작은 돌기가 있다. 수관계로 호흡과 순환이 이루어지며 수관계 끝에 돌출되어 있는 관족으로 운동과 감각 수용을 한다. 바다에 서식하며 천천히 움직이거나 고착 생활을 한다. 불가사리, 성게, 해삼 등이 있다.", img: "https://www.publicdomainpictures.net/pictures/180000/nahled/starfish-14641066626Au.jpg" }, 
                                     { name: "척삭동물문", emoji: "🐟", color: "#02fcef", features: ["척삭", "체절", "오목눈이", "악어", "대왕판다", "피카츄", "잉어킹"], desc: "몸에 체절이 있으며 발생 과정 중 또는 일생 동안 척삭이 나타나고 좌우 대칭인 3배엽동물이다. 척삭 외에도 항문 뒤쪽의 꼬리, 등쪽의 속이 빈 신경 다발, 소화관에서 입 다음 부분인 인두로 열리는 틈새가 공통적인 형질이다. 우렁쉥이, 창고기 등이 있다. 척삭동물문의 대부분을 차지하는 척추동물은 발생 과정 초기에 척삭이 나타나지만 성체로 성장하면서 척삭은 퇴화하고 척추로 대치된다. 척추동물에는 상어, 개구리, 뱀, 비둘기, 코끼리 등이 있다.", img: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/010a163a-59d0-4bf9-9a56-00a6b6c0a0b9/d6094yj-04911599-84b1-4211-bba0-5a0b1772a072.jpg" }
@@ -377,7 +378,6 @@
         /**
          * 4. D3.js 계통수 코어
          */
-        // ⚙️ 픽스 1: 모바일 키보드Retract 상태 리사이즈 관리를 위한 하이라이트 상태 보존 변수 추가
         let svg, g, zoomObj, currentLevel = 'full', currentHighlightName = null;
 
         window.onload = function() {
@@ -388,7 +388,7 @@
             
             window.renderTree = function(level, highlightName = null) {
                 currentLevel = level;
-                currentHighlightName = highlightName; // ⚙️ 픽스 1 연타: 렌더링 호출 시마다 현재 상태 강제 동기화
+                currentHighlightName = highlightName; 
                 g.selectAll("*").remove(); 
                 
                 const data = treeData[level];
@@ -404,6 +404,20 @@
                     treeLayout.size([window.innerHeight - 250, window.innerWidth - 420]); 
                 }
                 treeLayout(root);
+
+                // 🌟 [픽스 3] 식물계 노드 겹침 해결: 관다발 식물과 종자 식물 노드를 아래 방향으로 하강 미세조정
+                root.descendants().forEach(d => {
+                    if (level === 'plantae') {
+                        if (d.data.name === "관다발 식물") {
+                            if (!isMobile) d.x += 50; // PC는 수직 축이 x
+                            else d.y += 50;          // 모바일은 수직 축이 y
+                        }
+                        if (d.data.name === "종자 식물") {
+                            if (!isMobile) d.x += 35;
+                            else d.y += 35;
+                        }
+                    }
+                });
 
                 const linkGen = isMobile ? d3.linkVertical().x(d => d.x).y(d => d.y) : d3.linkHorizontal().x(d => d.y).y(d => d.x);
                 g.selectAll(".link").data(root.links()).enter().append("path").attr("class", "link").attr("d", linkGen);
@@ -459,8 +473,12 @@
                     .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
                     .text(d => (d.data.emoji || "") + " " + d.data.name);
 
+                // 🌟 [빅 픽스 4] 동물계 특정 노드의 key 텍스트 위치 반전 분기문 배치
                 node.filter(d => d.data.key).append("text").attr("class", "key-label")
                     .attr("dy", (d) => {
+                        if (d.data.name === "해면동물문" || d.data.name === "자포동물문") {
+                            return "-2.5em"; // 아래 노드와의 겹침을 방지하기 위해 텍스트를 위쪽으로 고상하게 배치!
+                        }
                         if(!isMobile) return "3.5em";
                         return (d.parent && d.parent.children.indexOf(d) % 2 !== 0) ? "6.2em" : "4.2em";
                     })
@@ -490,7 +508,6 @@
 
             window.renderTree('full');
             
-            // ⚙️ 픽스 1 완료: 모바일 소프트 키보드가 닫히면서 일어나는 resize 시점에 검색 하이라이트 인자 값을 유실하지 않도록 수정!
             window.addEventListener('resize', () => {
                 if(document.getElementById('tab-dashboard').classList.contains('active')) {
                     window.renderTree(currentLevel, currentHighlightName); 
@@ -502,7 +519,11 @@
          * 5. 생물 역추적 검색
          */
         window.searchOrganism = function() {
-            const term = document.getElementById('search-input').value.trim();
+            // ⚙️ [픽스 1] 검색 작동 시 모바일 가상 키보드를 즉시 닫아 뷰포트를 안정화시킵니다.
+            const inputField = document.getElementById('search-input');
+            inputField.blur();
+
+            const term = inputField.value.trim();
             if(!term) return;
 
             const match = flatDataList.find(d => {
@@ -513,7 +534,12 @@
             });
 
             if(match) {
-                if(window.renderTree) window.renderTree(match.treeKey, match.name);
+                currentLevel = match.treeKey;
+                currentHighlightName = match.name;
+                // ⚙️ 키보드가 다 내려가서 브라우저 창 크기가 완전히 고정된 후 1타 1피로 정밀 추적하도록 150ms 타이밍 우회
+                setTimeout(() => {
+                    if(window.renderTree) window.renderTree(match.treeKey, match.name);
+                }, 150);
             } else {
                 alert("앗! 교과서나 수업 자료에 등록되지 않은 생물군입니다. 정확한 명칭을 확인해 주세요! 😢");
             }
@@ -558,7 +584,21 @@
             { img: "https://i.namu.wiki/i/aJM5ISqRq3jgrl6aGzBoZM4GYYGbJM4H33S2kb3gwL5NBtNCtzdrolOmATiP2E2hdrwtaYGQYIvcIT-L6lv3Kw.webp", text: "라이온 킹의 '심바'! 맹수이자 고양이과 동물인 사자는 생물 분류체계상 어느 문에 속하는가?", answer: "척삭동물문", wrong: "절지동물문" },
             { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/7LyG/image/qJkMNM4WOVCojahrPtLTMAO4o5s", text: "스폰지밥의 애완동물 '핑핑이'! 기어 다니는 배(복족류)와 석회질 패각을 가진 달팽이는 어느 문?", answer: "연체동물문", wrong: "절지동물문" },
             { img: "https://upload.wikimedia.org/wikipedia/en/d/dc/Perry_the_Platypus.png", text: "피니와 퍼브의 '페리'! 알을 낳지만 새끼에게 젖을 먹이는 기이한 동물인 오리너구리의 동물문은?", answer: "척삭동물문", wrong: "연체동물문" },
-            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/069.png", text: "포켓몬 '모다피'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 밑씨가 씨방 속에 들어 있는 이 식물 분류군은?", answer: "속씨식물", wrong: "양치식물문" }
+            { img: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/069.png", text: "포켓몬 '모다피'! 파리를 잡아먹는 식충식물(네펜데스)이 모델이며, 꽃이 피고 밑씨가 씨방 속에 들어 있는 이 식물 분류군은?", answer: "속씨식물", wrong: "양치식물문" },
+            { img: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500", text: "[상식] 사람의 몸에 있는 '뼈의 개수'는 갓난아기와 어른 중 누가 더 많을까?", answer: "갓난아기 (약 270개)", wrong: "어른 (206개)" },
+            { img: "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=500", text: "[넌센스] 견과류인 '아몬드'가 죽으면 무엇이 될까?", answer: "다이아몬드 (Die+아몬드)", wrong: "볶은아몬드" },
+            { img: "https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=500", text: "[상식] 세계보건기구(WHO)가 지정한 장수 식품이자, 과일이 아니라 '채소(과채류)'에 해당하는 것은?", answer: "토마토", wrong: "오렌지" },
+            { img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500", text: "[넌센스] 전 세계의 식물학자들이 가장 가기 싫어하고 싫어하는 도시는?", answer: "시드니 (시드니...?)", wrong: "파리" },
+            { img: "https://images.unsplash.com/photo-1557008075-7f2c5efa4cfd?w=500", text: "[상식] 바다에 사는 고래와 돌고래는 알을 낳지 않고 새끼를 낳아 기른다. 이들은 어디에 속할까?", answer: "포유류", wrong: "어류" },
+            { img: "https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=500", text: "[넌센스] 귀여운 집오리(`emoji: 🦆`)가 꽁꽁 얼어버리면 무엇이 될까?", answer: "언덕 (얼은+덕)", wrong: "오리백숙" },
+            { img: "https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500", text: "[상식] 새들 중에서 날개가 있지만 날지 못하는 대신, 바닷속에서 시속 36km로 '수영'을 엄청 잘하는 생물은?", answer: "펭귄", wrong: "갈매기" },
+            { img: "https://images.unsplash.com/photo-1570741270241-11880509a25b?w=500", text: "[넌센스] 몸의 색깔을 바꾸는 카멜레온 말고, 언제나 단단한 '청바지'를 입고 다니는 동물은?", answer: "청개구리", wrong: "레오파드게코" },
+            { img: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=500", text: "[넌센스] 사자가 가장 최고로 좋아하고 즐겨 먹는 '국'은 무엇일까?", answer: "동물의 왕국", wrong: "사골국" },
+            { img: "https://images.unsplash.com/photo-1607349913338-fca6f7fc42d0?w=500", text: "[넌센스] 포켓몬 피카츄가 길을 가다가 담배 꽁초를 주우면서 하는 말은?", answer: "피까?", wrong: "백만볼트!" },
+            { img: "https://images.unsplash.com/photo-1543157148-f68f2d47a628?w=500", text: "[상식] 달콤한 '딸기'는 식물 분류학상 신기하게도 무슨 꽃과 같은 가문(Family)일까?", answer: "장미과", wrong: "국화과" },
+            { img: "https://images.unsplash.com/photo-1550596334-7bb40a71b6bc?w=500", text: "[넌센스] 바람이 아주 세련되고 이쁘게 부는 지역을 4글자로 하면?", answer: "미풍양속", wrong: "돌풍주의" },
+            { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500", text: "[넌센스] 한우 농장의 얼룩소가 기분이 너무 좋아서 웃는 소리를 3글자로 하면?", answer: "우하하 (牛하하)", wrong: "음매애" },
+            { img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500", text: "[넌센스] 기하학 도형 중에서 자기 혼자만 맨날 억울하고 답답해하는 도형은?", answer: "원통 (원통하다...)", wrong: "삼각형" }
         ];
 
         let quizSet = [], currentQ = 0, score = 0, playerNick = "";
