@@ -568,7 +568,7 @@
             { img: "https://i1.sndcdn.com/artworks-oKnp6FNTn4ZhtINF-foNy2A-t500x500.jpg", text: "돈 좋아하는 집게사장! 키틴질 외골격을 가지며 탈피를 통해 생장하는 동물군은?", answer: "절지동물문", wrong: "환형동물문" },
             { img: "https://www.animationmagazine.net/wordpress/wp-content/uploads/pokemon-detective-pikachu.jpg", text: "전기쥐 피카츄! 일생 또는 발생 과정 중 등쪽에 속이 빈 신경관과 척삭이 나타나는 문은?", answer: "척삭동물문", wrong: "절지동물문" },
             { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/cnoC/image/013bLiTo1KqwkuI0ObMpa4rCzM4", text: "파닥거리는 잉어킹! 발생 초기에 척삭이 나타났으나 자라면서 척추로 대체되는 포괄적 분류군은?", answer: "척삭동물문", wrong: "연체동물문" },
-            { img: "https://cdn.eduplusnews.com/news/photo/202509/16269_21416_268.jpg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "은행식물문", wrong: "양치식물문", wrong2:"마황식물문" },
+            { img: "https://cdn.eduplusnews.com/news/photo/202509/16269_21416_268.jpg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "銀行植物門", wrong: "양치식물문", wrong2:"마황식물문" },
             { img: "https://db.kookje.co.kr/news2000/photo/2018/0620/L20180620.22021009399i1.jpg", text: "짚신벌레, 미역, 다시마처럼 진핵생물 중 균계, 식물계, 동물계를 제외한 과도기적 생물계는?", answer: "원생생물계", wrong: "고세균계" },
             { img: "https://d2fwaet2smbydf.cloudfront.net/species/JMr6nwXUDusNXgm1nmq.jpg", text: "교과서에 나오는 솔이끼처럼 유관속(관다발)이 발달하지 않은 대표적인 식물군은?", answer: "선태식물문", wrong: "양치식물문" },
             { img: "https://mblogthumb-phinf.pstatic.net/MjAyMDA4MTFfMjM4/MDAxNTk3MTQ1NDQ4NDk2.T6HG7vdQe0TbhkdWqE7hDKtrZ4s9-MhuLtASt2zkhiIg.LEF6KHE4-bIwdPiiqW_fQxqGD-4S_ask3r9I-ppvx8Eg.JPEG.aaaaahi/1597145449708.jpg?type=w800", text: "포자로 번식하지만 뿌리, 줄기, 잎이 뚜렷하고 관다발이 발달한 고사리는 어디에 속할까?", answer: "양치식물문", wrong: "선태식물문", wrong2:"각태류식물문"  },
@@ -627,6 +627,7 @@
             window.loadQuestion();
         };
 
+        // 🌟 [띨빡이의 핵심 패치 구역] wrong2 가 없어도 undefined 가 뜨지 않고 2개 혹은 3개로 유연하게 보기가 나오도록 변경!
         window.loadQuestion = function() {
             if(currentQ >= quizSet.length) return window.endQuiz();
             
@@ -636,7 +637,8 @@
             document.getElementById('q-img').src = q.img;
             document.getElementById('q-text').innerText = q.text;
             
-            const opts = [q.answer, q.wrong, q.wrong2].sort(() => Math.random() - 0.5);
+            // 💡 filter(Boolean)을 추가하여 undefined나 빈 값인 오답은 주머니에서 깔끔하게 걸러내고 랜덤 셔플합니다!
+            const opts = [q.answer, q.wrong, q.wrong2].filter(Boolean).sort(() => Math.random() - 0.5);
             document.getElementById('q-options').innerHTML = opts.map(opt => 
                 `<button onclick="checkAnswer('${opt}', '${q.answer}')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl border border-white/10 transition-all text-sm md:text-base border-none">${opt}</button>`
             ).join('');
