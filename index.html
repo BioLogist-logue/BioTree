@@ -39,7 +39,7 @@
         /* 노드 글자 테두리 처리 (가독성용) */
         .node-label { font-size: 14px; font-weight: 900; fill: #ffffff !important; paint-order: stroke; stroke: #000000; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
         
-        /* 🔥 픽스 완료: 모바일에서 사이드바가 검색창(150)을 확실하게 지붕처럼 덮도록 z-index 최상위 격상 */
+        /* 모바일 환경에서 사이드바가 검색창(150)을 완전히 덮도록 z-index 계층 업그레이드! */
         @media (max-width: 768px) { 
             .node-label { font-size: 11px; } 
             .sidebar { position: fixed; transform: translateX(-100%); height: 100%; z-index: 300; } 
@@ -54,8 +54,8 @@
         .popup-active { transform: translateY(0) !important; opacity: 1 !important; }
         .info-box { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
         
-        /* ⚙️ 픽스 연타: 햄버거 메뉴 버튼도 향상된 사이드바(300) 위에서 정상 동작하도록 z-index를 310으로 세팅 */
-        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 310; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; }
+        /* 🔥 띨빡이의 무빙 패치: 사이드바 움직임과 싱크로율을 맞추기 위해 transition: transform 0.3s 추가! */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 260; background: #3b82f6; color: white; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; transition: transform 0.3s ease; }
         @media (max-width: 768px) { .mobile-menu-btn { display: block; } }
 
         /* 스크롤바 및 팝업 애니메이션 */
@@ -153,7 +153,7 @@
 
                         <div id="quiz-result" class="hidden text-center py-8 space-y-6 flex flex-col gap-4">
                             <h2 class="text-3xl font-black text-green-400">🎉 플레이 완료!</h2>
-                            <p class="text-xl text-slate-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
+                            <p class="text-xl text-gray-300">최종 획득 점수: <span id="final-score" class="text-yellow-400 font-black text-4xl mx-1"></span> 점</p>
                             <button onclick="restartQuizSetup()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl border border-white/10 transition-colors">다시 도전하기</button>
                         </div>
                     </div>
@@ -236,15 +236,23 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             if(btnElement) btnElement.classList.add('active');
-            if(window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open'); 
+            if(window.innerWidth < 768) window.toggleSidebar(); // 사이드바가 닫힐 때 메뉴 버튼 위치 원복용 토글 호출
             
             if(tabId === 'dashboard' && window.renderTree) { 
                 setTimeout(() => window.renderTree(currentLevel, currentHighlightName), 50); 
             }
         };
 
+        // 🔥 픽스 완료: 모바일 메뉴 버튼이 사이드바와 한 몸처럼 함께 밀려나도록 오프셋 가산 주입!
         window.toggleSidebar = function() {
-            document.getElementById('sidebar').classList.toggle('open');
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+            const btn = document.querySelector('.mobile-menu-btn');
+            if (sidebar.classList.contains('open')) {
+                btn.style.transform = 'translateX(250px)';
+            } else {
+                btn.style.transform = 'translateX(0)';
+            }
         };
 
         window.closePopup = function() {
@@ -319,7 +327,7 @@
                         { name: "종자 식물", color: "#92d113", children: [
                             { name: "나자식물", color: "#007534", key: "씨방X", children: [
                                 { name: "은행식물문", emoji: "🍁", color: "#e9e910", features: ["은행나무"], desc: "현존하는 식물 중 은행나무 단 하나만이 속하는 매우 독특하고 고립된 분류군으로, 수억 년 전부터 살아남은 '살아있는 화석'이다.", img: "https://images.pexels.com/photos/29819857/pexels-photo-29819857/free-photo-of-golden-ginkgo-leaves-in-japanese-autumn.jpeg" },
-                                { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["소철"], desc: "넓은 의미의 소철은 소철속 단일 속으로 약 100~110여 종으로 구성되며 동아프리카, 동아시아 및 동남아시아, 호주 북부에 분포한다.", img: "https://live.staticflickr.com/216/466154979_414e694bb0_b.jpg" },
+                                { name: "소철식물문", emoji: "🌲", color: "#92e910", features: ["소철"], desc: "넓은 의미 of 소철은 소철속 단일 속으로 약 100~110여 종으로 구성되며 동아프리카, 동아시아 및 동남아시아, 호주 북부에 분포한다.", img: "https://live.staticflickr.com/216/466154979_414e694bb0_b.jpg" },
                                 { name: "구과식물문", emoji: "🌴", color: "#c17c14", features: ["구상나무"], desc: "방울열매를 만드는 식물, 대개 잎이 뾰족한 모습으로 나기 때문에 침엽수라고도 한다.", img: "https://live.staticflickr.com/883/42882786211_4181b3d540_b.jpg" },
                                 { name: "마황식물문", emoji: "🌳", color: "#ecc117", features: ["마황"], desc: "겉씨식물과 속씨식물의 중간 형태로서 줄기는 외관상 속새와 같고, 마디에 마주나거나 돌려나는 비늘 같은 잎이 있다.", img: "https://upload.wikimedia.org/wikipedia/commons/0/06/Green_ephedra_Ephedra_viridis_close.jpg" }
                             ]},
@@ -405,16 +413,23 @@
                 }
                 treeLayout(root);
 
-                // 🌟 [픽스 3] 식물계 노드 겹침 해결: 관다발 식물과 종자 식물 노드를 아래 방향으로 하강 미세조정
+                // 🌟 [포지션 픽스 주입] 노드들 간의 수직 간격이 겹치지 않도록 강제 아래방향 이동 처리
                 root.descendants().forEach(d => {
                     if (level === 'plantae') {
                         if (d.data.name === "관다발 식물") {
-                            if (!isMobile) d.x += 50; // PC는 수직 축이 x
-                            else d.y += 50;          // 모바일은 수직 축이 y
+                            if (!isMobile) d.x += 50;
+                            else d.y += 50;
                         }
                         if (d.data.name === "종자 식물") {
                             if (!isMobile) d.x += 35;
                             else d.y += 35;
+                        }
+                    }
+                    // 주인님이 명령하신 동물계 노드 간격 확보 구역
+                    if (level === 'animalia') {
+                        if (d.data.name === "3배엽, 좌우대칭") {
+                            if (!isMobile) d.x += 70; // PC 화면에서 자포동물문과 멀어지도록 아래로 하강!
+                            else d.y += 70;          // 모바일 폰에서도 이격 확보!
                         }
                     }
                 });
@@ -464,7 +479,8 @@
                 
                 node.append("text").attr("class", "node-label")
                     .attr("dy", (d) => {
-                        if (d.data.name === "진생동물" || d.data.name === "3배엽 형성") return "2.5em";
+                        // 🌟 데이터 이름 변경사항 반영: 3배엽 형성 -> 3배엽, 좌우대칭
+                        if (d.data.name === "진생동물" || d.data.name === "3배엽, 좌우대칭") return "2.5em";
                         if(!isMobile) return d.children ? "-1.8em" : "0.31em";
                         if(d.children) return "-2.2em";
                         return (d.parent && d.parent.children.indexOf(d) % 2 === 0) ? "2.8em" : "3.1em"; 
@@ -473,11 +489,11 @@
                     .style("text-anchor", d => isMobile ? "middle" : (d.children ? "middle" : "start"))
                     .text(d => (d.data.emoji || "") + " " + d.data.name);
 
-                // 🌟 [빅 픽스 4] 동물계 특정 노드의 key 텍스트 위치 반전 분기문 배치
                 node.filter(d => d.data.key).append("text").attr("class", "key-label")
                     .attr("dy", (d) => {
-                        if (d.data.name === "해면동물문" || d.data.name === "자포동물문") {
-                            return "-2.5em"; // 아래 노드와의 겹침을 방지하기 위해 텍스트를 위쪽으로 고상하게 배치!
+                        // 🌟 [겹침 픽스 완료] 해면, 자포동물문, 그리고 진생동물 노드의 key는 머리 위(-2.5em)로 로켓 발사!
+                        if (d.data.name === "해면동물문" || d.data.name === "자포동물문" || d.data.name === "진생동물") {
+                            return "-2.5em"; 
                         }
                         if(!isMobile) return "3.5em";
                         return (d.parent && d.parent.children.indexOf(d) % 2 !== 0) ? "6.2em" : "4.2em";
@@ -519,7 +535,6 @@
          * 5. 생물 역추적 검색
          */
         window.searchOrganism = function() {
-            // ⚙️ [픽스 1] 검색 작동 시 모바일 가상 키보드를 즉시 닫아 뷰포트를 안정화시킵니다.
             const inputField = document.getElementById('search-input');
             inputField.blur();
 
@@ -536,7 +551,6 @@
             if(match) {
                 currentLevel = match.treeKey;
                 currentHighlightName = match.name;
-                // ⚙️ 키보드가 다 내려가서 브라우저 창 크기가 완전히 고정된 후 1타 1피로 정밀 추적하도록 150ms 타이밍 우회
                 setTimeout(() => {
                     if(window.renderTree) window.renderTree(match.treeKey, match.name);
                 }, 150);
@@ -597,7 +611,8 @@
             { img: "https://images.unsplash.com/photo-1607349913338-fca6f7fc42d0?w=500", text: "[넌센스] 포켓몬 피카츄가 길을 가다가 담배 꽁초를 주우면서 하는 말은?", answer: "피까?", wrong: "백만볼트!" },
             { img: "https://images.unsplash.com/photo-1543157148-f68f2d47a628?w=500", text: "[상식] 달콤한 '딸기'는 식물 분류학상 신기하게도 무슨 꽃과 같은 가문(Family)일까?", answer: "장미과", wrong: "국화과" },
             { img: "https://images.unsplash.com/photo-1550596334-7bb40a71b6bc?w=500", text: "[넌센스] 바람이 아주 세련되고 이쁘게 부는 지역을 4글자로 하면?", answer: "미풍양속", wrong: "돌풍주의" },
-            { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500", text: "[넌센스] 한우 농장의 얼룩소가 기분이 너무 좋아서 웃는 소리를 3글자로 하면?", answer: "우하하 (牛하하)", wrong: "음매애" },
+            { img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500", text: "[넌센스] 과일 가게에 있는 과일들 중에서 가장 온도가 뜨겁고 열정적인 과일은?", answer: "천도복숭아 (1000도)", wrong: "패션후르츠" },
+            { img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500", text: "[넌센스] 한우 농장의 얼룩소가 기분이 너무 좋아서 웃는 소리를 3글자로 하면?", answer: "우하하 (牛하하)", wrong: "음매애" },
             { img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500", text: "[넌센스] 기하학 도형 중에서 자기 혼자만 맨날 억울하고 답답해하는 도형은?", answer: "원통 (원통하다...)", wrong: "삼각형" }
         ];
 
