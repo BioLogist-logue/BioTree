@@ -492,7 +492,7 @@
                 node.filter(d => d.data.key).append("text").attr("class", "key-label")
                     .attr("dy", (d) => {
                         // 🌟 [겹침 픽스 완료] 해면, 자포동물문, 그리고 진생동물 노드의 key는 머리 위(-2.5em)로 로켓 발사!
-                        if (d.data.name === "해면동물문" || d.data.name === "자포동물문" || d.data.name === "진생동물") {
+                        if (d.data.name === "해면동물문" || d.data.name === "자포동물문") {
                             return "-2.5em"; 
                         }
                         if(!isMobile) return "3.5em";
