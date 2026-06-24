@@ -227,6 +227,18 @@
         </div>
     </div>
 
+    <div id="custom-alert-modal" class="fixed inset-0 z-[400] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="closeCustomAlert()"></div>
+        <div class="relative w-full max-w-sm bg-slate-900 border border-blue-500/30 rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10" style="animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div class="p-6 text-center">
+                <div class="text-4xl mb-3">⚠️</div>
+                <h3 class="text-xl font-black text-blue-400 mb-2">알림</h3>
+                <p id="custom-alert-msg" class="text-slate-300 text-sm mb-6 font-medium leading-relaxed"></p>
+                <button onclick="closeCustomAlert()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-3 rounded-xl transition-colors border-none">확인</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /**
          * 1. Supabase 초기화 (API 키 적용 완료 & 변수명 충돌 방지)
@@ -236,7 +248,7 @@
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
         /**
-         * 2. UI 제어 함수 (전역 스코프로 분리하여 버튼 인식 100% 보장)
+         * 2. UI 제어 함수
          */
         window.switchTab = function(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -272,6 +284,20 @@
 
         window.closeContact = function() {
             document.getElementById('contact-popup').classList.remove('active');
+        };
+
+        // 🌟 커스텀 알림 모달 제어 함수
+        window.showCustomAlert = function(msg) {
+            document.getElementById('custom-alert-msg').innerText = msg;
+            const modal = document.getElementById('custom-alert-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeCustomAlert = function() {
+            const modal = document.getElementById('custom-alert-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         };
 
         /**
@@ -434,11 +460,11 @@
                     if (level === 'animalia') {
                         if (d.data.name === "공통조상") {
                             if (!isMobile) d.x += 85; 
-                            else d.y += 85;          
+                            else d.y += 85;         
                         }
                         if (d.data.name === "3배엽, 좌우대칭") {
                             if (!isMobile) d.x += 155; 
-                            else d.y += 130;          
+                            else d.y += 130;         
                         }
                     }
                 });
@@ -562,7 +588,7 @@
                     if(window.renderTree) window.renderTree(match.treeKey, match.name);
                 }, 150);
             } else {
-                alert("앗! 교과서나 수업 자료에 등록되지 않은 생물군입니다. 정확한 명칭을 확인해 주세요! 😢");
+                window.showCustomAlert("앗! 교과서나 수업 자료에 등록되지 않은 생물군입니다. 정확한 명칭을 확인해 주세요! 😢");
             }
         };
 
@@ -578,7 +604,7 @@
             { img: "https://i1.sndcdn.com/artworks-oKnp6FNTn4ZhtINF-foNy2A-t500x500.jpg", text: "돈 좋아하는 집게사장! 키틴질 외골격을 가지며 탈피를 통해 생장하는 동물군은?", answer: "절지동물문", wrong: "환형동물문" },
             { img: "https://www.animationmagazine.net/wordpress/wp-content/uploads/pokemon-detective-pikachu.jpg", text: "전기쥐 피카츄! 일생 또는 발생 과정 중 등쪽에 속이 빈 신경관과 척삭이 나타나는 문은?", answer: "척삭동물문", wrong: "절지동물문" },
             { img: "https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/cnoC/image/013bLiTo1KqwkuI0ObMpa4rCzM4", text: "파닥거리는 잉어킹! 발생 초기에 척삭이 나타났으나 자라면서 척추로 대체되는 포괄적 분류군은?", answer: "척삭동물문", wrong: "연체동물문" },
-            { img: "https://cdn.eduplusnews.com/news/photo/202509/16269_21416_268.jpg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "銀行植物門", wrong: "양치식물문", wrong2:"마황식물문" },
+            { img: "https://cdn.eduplusnews.com/news/photo/202509/16269_21416_268.jpg", text: "수억 년 전 모습을 간직한 '살아있는 화석' 은행나무는 식물계 중 어디에 속하는가?", answer: "은행식물문", wrong: "양치식물문", wrong2:"마황식물문" },
             { img: "https://db.kookje.co.kr/news2000/photo/2018/0620/L20180620.22021009399i1.jpg", text: "짚신벌레, 미역, 다시마처럼 진핵생물 중 균계, 식물계, 동물계를 제외한 과도기적 생물계는?", answer: "원생생물계", wrong: "고세균계" },
             { img: "https://d2fwaet2smbydf.cloudfront.net/species/JMr6nwXUDusNXgm1nmq.jpg", text: "교과서에 나오는 솔이끼처럼 유관속(관다발)이 발달하지 않은 대표적인 식물군은?", answer: "선태식물문", wrong: "양치식물문" },
             { img: "https://mblogthumb-phinf.pstatic.net/MjAyMDA4MTFfMjM4/MDAxNTk3MTQ1NDQ4NDk2.T6HG7vdQe0TbhkdWqE7hDKtrZ4s9-MhuLtASt2zkhiIg.LEF6KHE4-bIwdPiiqW_fQxqGD-4S_ask3r9I-ppvx8Eg.JPEG.aaaaahi/1597145449708.jpg?type=w800", text: "포자로 번식하지만 뿌리, 줄기, 잎이 뚜렷하고 관다발이 발달한 고사리는 어디에 속할까?", answer: "양치식물문", wrong: "선태식물문", wrong2:"각태류식물문"  },
@@ -609,7 +635,7 @@
             { img: "https://img.khan.co.kr/news/2017/04/21/khan_zd2l0G.jpg", text: "[상식] 세계보건기구(WHO)가 지정한 장수 식품이자, 과일이 아니라 '채소(과채류)'에 해당하는 것은?", answer: "토마토", wrong: "오렌지" },
             { img: "https://image.ajunews.com/content/image/2023/06/23/20230623221909829683.jpg", text: "[넌센스] 전 세계의 식물학자들이 가장 가기 싫어하고 싫어하는 도시는?", answer: "Sydney", wrong: "Paris", wrong2:"London" },
             { img: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2014/0829/IE001748429_STD.jpg", text: "[상식] 바다에 사는 고래와 돌고래는 알을 낳지 않고 새끼를 낳아 기른다. 이들은 어디에 속할까?", answer: "포유류", wrong: "어류" },
-            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoZuAGqdHV3qAhNznyfyz3LyTFM2wnDhLaVDv_QpgnRJW6e9Bcg8VnhvY&s=10", text: "[넌센스] 귀여운 집오리(`emoji: 🦆`)가 꽁꽁 얼어버리면 무엇이 될까?", answer: "언덕", wrong: "오리백숙" },
+            { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoZuAGqdHV3qAhNznyfyz3LyTFM2wnDhLaVDv_QpgnRJW6e9Bcg8VnhvY&s=10", text: "[넌센스] 귀여운 집오리(🦆)가 꽁꽁 얼어버리면 무엇이 될까?", answer: "언덕", wrong: "오리백숙" },
             { img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT10nieNefTqGJWwgDzCbJdJyWeViUTOHnRJc0RsIvKQGrURvOsHuZSJNE&s=10", text: "[상식] 새들 중에서 날개가 있지만 날지 못하는 대신, 바닷속에서 시속 36km로 '수영'을 엄청 잘하는 생물은?", wrong2:"날치", answer: "펭귄", wrong: "갈매기" },
             { img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Panther_chameleon_%28Furcifer_pardalis%29_male_Nosy_Be.jpg/1280px-Panther_chameleon_%28Furcifer_pardalis%29_male_Nosy_Be.jpg", text: "[넌센스] 몸의 색깔을 바꾸는 카멜레온 말고, 언제나 단단한 '청바지'를 입고 다니는 동물은?", answer: "청개구리", wrong: "레오파드게코" },
             { img: "https://dimg.donga.com/a/650/0/90/5/ugc/CDB/SHINDONGA/Article/5f/9a/4c/f6/5f9a4cf615cfd2738de6.jpg", text: "[넌센스] 사자가 가장 최고로 좋아하고 즐겨 먹는 '국'은 무엇일까?", answer: "동물의 왕국", wrong: "사골국" },
@@ -625,7 +651,7 @@
 
         window.startQuiz = function() {
             playerNick = document.getElementById('player-nickname').value.trim();
-            if(!playerNick) return alert("시상대에 이름을 올릴 닉네임을 적어주세요!");
+            if(!playerNick) return window.showCustomAlert("시상대에 이름을 올릴 닉네임을 적어주세요! 📝");
             
             quizSet = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 10);
             currentQ = 0; score = 0;
@@ -635,7 +661,6 @@
             window.loadQuestion();
         };
 
-        // 🌟 [띨빡이의 핵심 패치 구역] wrong2 가 없어도 undefined 가 뜨지 않고 2개 혹은 3개로 유연하게 보기가 나오도록 변경!
         window.loadQuestion = function() {
             if(currentQ >= quizSet.length) return window.endQuiz();
             
@@ -645,7 +670,6 @@
             document.getElementById('q-img').src = q.img;
             document.getElementById('q-text').innerText = q.text;
             
-            // 💡 filter(Boolean)을 추가하여 undefined나 빈 값인 오답은 주머니에서 깔끔하게 걸러내고 랜덤 셔플합니다!
             const opts = [q.answer, q.wrong, q.wrong2].filter(Boolean).sort(() => Math.random() - 0.5);
             document.getElementById('q-options').innerHTML = opts.map(opt => 
                 `<button onclick="checkAnswer('${opt}', '${q.answer}')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl border border-white/10 transition-all text-sm md:text-base border-none">${opt}</button>`
@@ -682,10 +706,10 @@
                 return;
             }
             const { data, error } = await supabaseClient.from('scores')
-    .select('*')
-    .order('score', { ascending: false })
-    .order('created_at', { ascending: false }) 
-    .limit(5);
+                .select('*')
+                .order('score', { ascending: false })
+                .order('created_at', { ascending: false }) 
+                .limit(5);
             if(error) return console.error(error);
             
             const lb = document.getElementById('leaderboard');
@@ -714,5 +738,17 @@
                 }).subscribe();
         }
     </script>
+
+    <div id="custom-alert-modal" class="fixed inset-0 z-[400] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="closeCustomAlert()"></div>
+        <div class="relative w-full max-w-sm bg-slate-900 border border-blue-500/30 rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10" style="animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div class="p-6 text-center">
+                <div class="text-4xl mb-3">⚠️</div>
+                <h3 class="text-xl font-black text-blue-400 mb-2">알림</h3>
+                <p id="custom-alert-msg" class="text-slate-300 text-sm mb-6 font-medium leading-relaxed"></p>
+                <button onclick="closeCustomAlert()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-3 rounded-xl transition-colors border-none">확인</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
